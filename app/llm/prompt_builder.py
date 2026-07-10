@@ -1,0 +1,211 @@
+from app.llm.models import LLMRequest
+from app.llm.prompts import STUDY_NOTES_PROMPT
+from app.llm.prompts.outline import OUTLINE_PROMPT
+from app.llm.prompts.merge import MERGE_PROMPT
+from app.llm.outline_parser import OutlineTopic
+from app.llm.prompts.teaching import TEACHING_PROMPT
+from app.llm.prompts.extraction import EXTRACTION_PROMPT
+from app.llm.knowledge_models import ExtractedKnowledge
+
+import json
+from dataclasses import asdict
+
+
+class PromptBuilder:
+    def _format_outline(self, outline: list[OutlineTopic]) -> str:
+        """Helper method to turn our outline list into clean bullet points"""
+        return "\n".join([f"- {topic.title} ({topic.role})" for topic in outline])
+
+    def build_outline(self, chunks) -> LLMRequest:
+
+        formatted_chunks = []
+
+        for index, chunk in enumerate(chunks):
+            formatted_chunks.append(
+                                    f"""
+                        ===== CHUNK {index + 1} =====
+
+                        {chunk.text}
+                        """
+                                )
+
+        combined_text = "\n".join(formatted_chunks)
+
+        user_prompt = f"""
+                        Analyze the following educational material.
+
+                        Identify the major topics.
+
+                        For every topic include:
+
+                        - Title
+                        - Description
+                        - Role
+                        - Source Chunk(s)
+
+                        Material:
+
+                        {combined_text}
+                    """
+
+        return LLMRequest(
+            system_prompt=OUTLINE_PROMPT,
+            user_prompt=user_prompt,
+        )
+
+    def build(
+        self,
+        text: str,
+        outline: list[OutlineTopic],
+        current_topic: OutlineTopic,
+        topic_index: int,
+        total_topics: int,
+        previous_notes: str | None = None,
+    ) -> LLMRequest:
+
+        previous_section = previous_notes or "None (this is the first section)."
+
+        outline_text = "\n".join(
+            [
+                f"- {topic.title} ({topic.role})"
+                for topic in outline
+            ]
+        )
+
+        user_prompt = f"""
+                            DOCUMENT OUTLINE
+
+                            {outline_text}
+
+                            CURRENT TOPIC
+
+                            Title:
+                            {current_topic.title}
+
+                            Description:
+                            {current_topic.description}
+
+                            Role:
+                            {current_topic.role}
+
+                            Topic {topic_index + 1} of {total_topics}
+
+                            PREVIOUS SECTION
+
+                            {previous_section}
+
+                            YOUR RESPONSIBILITY
+
+                            Write this section according to its role.
+
+                            If the role is Motivation:
+                            Explain why this topic exists before explaining how it works.
+
+                            If the role is Intuition:
+                            Help the reader build an intuitive mental model.
+
+                            If the role is Mechanism:
+                            Explain the complete process step-by-step.
+
+                            If the role is Procedure:
+                            Describe the algorithm or workflow clearly.
+
+                            If the role is Example:
+                            Focus on demonstrating the concept.
+
+                            If the role is Edge Case:
+                            Explain limitations, assumptions and special cases.
+
+                            If the role is Takeaway:
+                            Summarize the important lessons and connect them to earlier topics.
+
+                            TASK
+
+                            Using ONLY the source content below:
+
+                            - Teach the material instead of summarizing it.
+                            - Follow the document outline.
+                            - Expand ideas when necessary.
+                            - Explain the reasoning behind important steps.
+                            - Define technical terms on first use.
+                            - Avoid repeating previous sections.
+                            - Assume this section will later be merged into one complete study guide.
+
+                            SOURCE CONTENT
+
+                            {text}
+                        """
+
+        return LLMRequest(
+            system_prompt=STUDY_NOTES_PROMPT,
+            user_prompt=user_prompt,
+        )
+    
+    def build_merge(self, sections: list[str]) -> LLMRequest:
+        combined = "\n\n".join(sections)
+
+        user_prompt = f"""
+                        Merge the following study guide sections into one polished document.
+
+                        Study Guide Sections
+
+                        {combined}
+                    """
+
+        return LLMRequest(
+            system_prompt=MERGE_PROMPT,
+            user_prompt=user_prompt,
+        )
+    
+    def build_extraction(self, text: str) -> LLMRequest:
+
+        return LLMRequest(
+            system_prompt=EXTRACTION_PROMPT,
+            user_prompt=text,
+        )
+    
+    def build_teaching(
+    self,
+    knowledge: ExtractedKnowledge,
+    outline: list[OutlineTopic],
+    current_topic: OutlineTopic,
+    previous_notes: str | None,
+    topic_index: int,
+    total_topics: int,
+    ) -> LLMRequest:
+        
+        knowledge_json = json.dumps(
+            asdict(knowledge),
+            indent=2,
+        )
+
+        outline_text = self._format_outline(outline)
+
+        previous = previous_notes or "None"
+
+        user_prompt = f"""
+                            DOCUMENT OUTLINE
+
+                            {outline_text}
+
+                            CURRENT TOPIC
+
+                            Title: {current_topic.title}
+
+                            Description: {current_topic.description}
+
+                            Role: {current_topic.role}
+
+                            PREVIOUS SECTION
+
+                            {previous}
+
+                            EXTRACTED KNOWLEDGE
+
+                            {knowledge_json}
+                         """
+
+        return LLMRequest(
+            system_prompt=TEACHING_PROMPT,
+            user_prompt=user_prompt,
+        )

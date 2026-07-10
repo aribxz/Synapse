@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Knowledge Pipeline Test</title>
+</head>
+<body>
+
+<h1>Backend Integration Test</h1>
+
+<form action="/process" method="POST" enctype="multipart/form-data">
+
+    <input type="file" name="files" multiple>
+
+    <br><br>
+
+    <textarea
+        name="urls"
+        rows="8"
+        cols="80"
+        placeholder="One URL per line"
+    ></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Generate Notes
+    </button>
+
+</form>
+
+</body>
+</html>
