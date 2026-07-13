@@ -8,7 +8,7 @@ class OutlineTopic:
     role: str
     source_chunks: list[int]
 
-class OutlineParser:
+class OutlineParser: # Processes the AI's response. When it sees Source Chunks: 1, 5, it converts that string into a Python list of integers inside an OutlineTopic object.
     def parse(self, outline: str) -> list[OutlineTopic]: # It takes a raw string (outline) and returns a list of OutlineTopic objects.
         topics = []
         current = {}

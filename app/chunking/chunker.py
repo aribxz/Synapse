@@ -3,7 +3,7 @@ from app.chunking.chunk import Chunk
 
 class Chunker:
 
-    def __init__(self, max_tokens: int = 3000):
+    def __init__(self, max_tokens: int = 1200):
         self.max_tokens = max_tokens
 
     def chunk(self, text: str) -> list[Chunk]:
@@ -43,5 +43,9 @@ class Chunker:
                     estimated_tokens=current_tokens
                 )
             )
+        print(f"Created {len(chunks)} chunks.")
 
+        for chunk in chunks:
+            print(f"Chunk {chunk.id}: {chunk.estimated_tokens} estimated tokens")
+            
         return chunks

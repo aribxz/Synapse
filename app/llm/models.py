@@ -10,6 +10,7 @@ class LLMRequest:
 class LLMResponse:
     raw_output: str
     parsed_output: dict | None = None
+    usage: dict | None = None
 
 @dataclass
 class PromptContext:

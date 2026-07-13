@@ -1,6 +1,6 @@
 import re # -> Regex (Regular Expressions)
 
-class TextCleaner:
+class TextCleaner: # We do this because large amounts of whitespaces can consume tokens.
     def clean(self, text: str):
         text = text.replace("\r", "\n") # standardizes everything to \n
         text = re.sub(r"\n{3,}", "\n\n", text) # If you find 3 or more consecutive newlines in a row, shrink them down to a maximum of 2 newlines

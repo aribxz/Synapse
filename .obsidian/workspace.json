@@ -8,63 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "a555953f55621d4b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "development log/Log 3.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Log 3"
-            }
-          },
-          {
             "id": "6ca5696f8f77590c",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logs/Day 4.md",
+                "file": "notes_test/test16.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Day 4"
-            }
-          },
-          {
-            "id": "1c988389285c32a2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "development log/Log 1.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Log 1"
-            }
-          },
-          {
-            "id": "1a82db4eb3f9073a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes_test/test7.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "test7"
+              "title": "test16"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -229,42 +186,42 @@
   },
   "active": "6ca5696f8f77590c",
   "lastOpenFiles": [
-    "development log/Log 4.md",
+    "notes_test/test15.md",
+    "notes_test/test16.md",
+    "notes_test/test14.md",
+    "notes_test/test13.md",
+    "notes_test/test14 (1).md",
+    "app/llm/__pycache__/gemini_client.cpython-314.pyc",
+    "app/llm/gemini_client.py",
+    "flow.md",
+    "Supervised Learning as Classification with Hyperplanes.md",
+    "notes_test/test12.md",
+    "notes_test/test11.md",
+    "tests/__pycache__/test_pipeline_service.cpython-314.pyc",
+    "tests/test_pipeline_service.py",
+    "tests/__pycache__/test_ai_service.cpython-314.pyc",
+    "tests/test_ai_service.py",
+    "uploads/State-action_value_function.txt",
+    "notes_test/test10.md",
+    "uploads/Reinforcement_Learning.txt",
     "logs/Day 4.md",
+    "__pycache__/config.cpython-314.pyc",
+    "__pycache__",
+    "Concepts.md",
+    "codebase_dump.md",
+    "Architecture.md.md",
+    "ARCHITECTURE.md",
+    "notes_test/test7.md",
+    "development log/Log 1.md",
+    "src/ARCHITECTURE.md",
+    "README.md",
+    "day_day 4_development_log.md",
+    "development log/Log 4.md",
+    "logs/Day 3.md",
+    "notes_test/test4.md",
     "development log/Log 3.md",
     "notes_test/test9.md",
-    "notes_test/test7.md",
     "notes_test/test8.md",
-    "tmp_repro/sample.docx",
-    "tmp_repro/sample.pdf",
-    "tmp_repro",
-    "tmp_check.py",
-    "uploads/Resume.pdf",
-    "Important.md",
-    "app/llm/__pycache__/extraction_parser.cpython-314.pyc",
-    "app/llm/__pycache__/knowledge_models.cpython-314.pyc",
-    "app/llm/knowledge_models.py",
-    "app/llm/extraction_parser.py",
-    "app/llm/knowlegde_models.py",
-    "notes_test/test6.md",
-    "notes_test/test5.md",
-    "notes_test/test4.md",
-    "logs/Day 3.md",
-    "README.md",
-    "ARCHITECTURE.md",
-    "outputs/notes.md",
-    "development log/Log 1.md",
-    "notes_test/test3.md",
-    "notes_test/test2.md",
-    "notes_test/test1.md",
-    "logs/Day 2.md",
-    "User_Knowledge_Summary.md",
-    "logs/Day 1.md",
-    "development log/Log 2.md",
-    "AI Knowledge Pipeline - Version 1.md",
-    "Log 1.md",
-    "ROADMAP.md",
-    "notes.md",
     "Untitled.canvas"
   ]
 }

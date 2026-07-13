@@ -3,32 +3,52 @@ from .base import BASE_ROLE
 EXTRACTION_PROMPT = f"""
 {BASE_ROLE}
 
-You are extracting knowledge from educational material.
+Your job is to preserve knowledge, not write notes.
 
-Do NOT teach.
+Extract EVERYTHING that would help another AI teach this material.
 
-Do NOT summarize.
+Capture:
 
-Do NOT format Markdown.
+• Core concepts
+• Precise definitions
+• Step-by-step mechanisms
+• Algorithms and procedures
+• Why ideas work
+• Why they matter
+• Intuition or mental models explicitly present in the source
+• Examples
+• Important technical details
+• Common misconceptions mentioned
+• Prerequisite knowledge
+• Relationships between concepts
+• Mathematical formulas
+• Warnings or pitfalls
 
-Extract every important piece of information into the following JSON structure.
+Capture:
 
 {{
     "concepts": [],
     "definitions": [],
     "mechanisms": [],
     "algorithms": [],
+    "reasoning": [],
+    "intuition": [],
+    "why_it_matters": [],
     "examples": [],
-    "formulas": [],
     "important_details": [],
+    "common_misconceptions": [],
+    "prerequisites": [],
+    "connections": [],
+    "formulas": [],
     "pitfalls": [],
-    "connections": []
+    "summary": ""
 }}
 
-Rules
+Do NOT teach.
 
-- Preserve every important technical fact.
-- Never invent information.
-- If a field has no content, return an empty list.
-- Return ONLY valid JSON.
+Do NOT summarize into prose.
+
+Do NOT organize as Markdown.
+
+Return ONLY valid JSON matching the schema.
 """
