@@ -173,17 +173,13 @@ class PromptBuilder:
     topic_index: int,
     total_topics: int,
     ) -> LLMRequest:
-        
-        knowledge_json = json.dumps(
-            asdict(knowledge),
-            indent=2,
-        )
 
+        knowledge_json = json.dumps(asdict(knowledge), indent=2)
+        previous = previous_notes or "None"
         outline_text = self._format_outline(outline)
 
-        previous = previous_notes or "None"
-
-        user_prompt = f"""
+        def _make_user_prompt(prev, kjson):
+            return f"""
                             DOCUMENT OUTLINE
 
                             {outline_text}
@@ -198,12 +194,33 @@ class PromptBuilder:
 
                             PREVIOUS SECTION
 
-                            {previous}
+                            {prev}
 
                             EXTRACTED KNOWLEDGE
 
-                            {knowledge_json}
+                            {kjson}
                          """
+
+        user_prompt = _make_user_prompt(previous, knowledge_json)
+
+        system_est = len(TEACHING_PROMPT) // 3
+        user_budget = max(1000, (5800 - system_est - 1500) * 3)
+
+        if len(user_prompt) > user_budget:
+            if len(previous) > 3000:
+                previous = "..." + previous[-3000:]
+            user_prompt = _make_user_prompt(previous, knowledge_json)
+
+        if len(user_prompt) > user_budget:
+            if len(previous) > 2000:
+                previous = "..." + previous[-2000:]
+            user_prompt = _make_user_prompt(previous, knowledge_json)
+
+        if len(user_prompt) > user_budget:
+            excess = len(user_prompt) - user_budget
+            allowed = max(len(knowledge_json) - excess - 50, 4000)
+            knowledge_json = knowledge_json[:allowed] + "\n  ...}"
+            user_prompt = _make_user_prompt(previous, knowledge_json)
 
         return LLMRequest(
             system_prompt=TEACHING_PROMPT,

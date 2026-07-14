@@ -90,7 +90,7 @@ Good spots:
       x-axis "x" [-5, 5]
       y-axis "y" [-1.5, 1.5]
       line "ReLU" [0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5]
-      line "Sigmoid" [0.01, 0.02, 0.05, 0.12, 0.27, 0.5, 0.73, 0.88, 0.95, 0.98, 0.99]
+      line "Sigmoid" [0.01, 0.02, 0.05, 0.12, 0.27, 0.5, 0.73, 0.88, 0.95, 0.99]
       line "TanH" [-0.99, -0.96, -0.91, -0.76, -0.46, 0, 0.46, 0.76, 0.91, 0.96, 0.99]
   ```
 
@@ -98,6 +98,10 @@ Rules:
 - Every diagram gets a short caption so it makes sense at a glance.
 - Diagrams should replace walls of text, not just repeat them.
 - Only add one if it genuinely helps — don't force it.
+- Node IDs MUST NOT contain parentheses, dots, or special characters.
+  Use Label["Text Label"] for any node with display text.
+  Correct: A[Probability of Event] --> B[Calculate Surprise]
+  Wrong:   Probability(p) --> Surprise(-log(p))
 
 ====================
 CALLOUTS
@@ -134,11 +138,17 @@ If the document contains a Markdown table comparing mathematical functions (e.g.
 - Pair LaTeX tables with an xychart-beta diagram showing the curves when applicable.
 
 ====================
-LATEX CLEANUP
+LATEX AND NOTATION CLEANUP
 ====================
 
 - Fix any broken math formatting (stray backslash-parens like `\\)`, missing brackets, etc.).
-- Make sure all math is properly wrapped in $...$ or $$...$$.
+- Make sure ALL math is properly wrapped in $...$ (inline) or $$...$$ (display).
+- NEVER leave formulas in plain code blocks — convert them to proper math delimiters.
+- Normalize logarithmic notation: always use \\log_2, \\log_{10}, \\ln (not "log2", "log₂", "log" without base).
+- Replace Unicode math characters inside math delimiters with LaTeX equivalents:
+  log₂ → \\log_2, Σ → \\sum, → → \\to, ≈ → \\approx, × → \\times
+- Check all Mermaid diagrams for invalid node IDs — any node text containing
+  parentheses must use Label["Text Labal"] syntax, NOT Label(text) syntax.
 
 ====================
 FLOW

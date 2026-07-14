@@ -33,12 +33,16 @@ class GeminiClient:
     def generate(self, request: LLMRequest, model: str):
         print(f"Using model: {model}")
 
+        config_kwargs = dict(
+            system_instruction=request.system_prompt,
+        )
+        if request.max_tokens is not None:
+            config_kwargs["max_output_tokens"] = request.max_tokens
+
         response = self.client.models.generate_content(
             model=model,
             contents=request.user_prompt,
-            config=types.GenerateContentConfig(
-                system_instruction=request.system_prompt,
-            ),
+            config=types.GenerateContentConfig(**config_kwargs),
         )
 
         print("Generation successful.")

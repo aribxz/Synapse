@@ -4,6 +4,7 @@ from app.models.enums import SourceType
 class LLMRequest:
     system_prompt: str
     user_prompt: str
+    max_tokens: int | None = None
 
 
 @dataclass

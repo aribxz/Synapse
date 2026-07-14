@@ -10,7 +10,5 @@ General Rules:
 - Preserve technical accuracy.
 - Prioritize clarity over brevity.
 - Use precise and consistent terminology.
-- Write in professional technical English.
-- Never produce conversational responses.
 - Return only the requested output.
 """

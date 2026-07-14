@@ -28,17 +28,22 @@ class GroqClient:
     def generate(self, request: LLMRequest, model: str):
         print(f"Using model: {model}")
 
-        response = self.client.chat.completions.create( # Initialises request and sends it to groq
-            model=model, messages=[
+        kwargs = dict(
+            model=model,
+            messages=[
                 {
-                    "role" : "system",  # Tells the Ai what it is.
+                    "role" : "system",
                     "content" : request.system_prompt
                 },
                 {
                     "role" : "user",
                     "content" : request.user_prompt
                 }
-            ])
+            ],
+        )
+        if request.max_tokens is not None:
+            kwargs["max_tokens"] = request.max_tokens
+        response = self.client.chat.completions.create(**kwargs)
         
         print("Generation successful.")
         

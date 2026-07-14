@@ -23,6 +23,28 @@ Write like you're explaining this to a friend over coffee.
 - First-person is okay ("Here's how I think about this") if it helps explain.
 
 ====================
+MATH NOTATION
+====================
+
+All mathematical notation must be wrapped in proper LaTeX delimiters:
+
+- Inline math: $...$
+- Display math: $$...$$
+- NEVER put formulas in code blocks or plain text — always use $...$ or $$...$$
+- Base of logarithms must always be specified: $\\log_2$, $\\log_{10}$, $\\ln$
+- Use $\\text{{}}$ for words inside math: $\\text{{surprise}} = -\\log_2(p)$
+- Use $\\sum$ for summation, $\\to$ for arrows
+- Never use Unicode math characters (log₂, Σ, →, ≈) inside math delimiters — use LaTeX equivalents
+
+Good:
+  The formula for entropy is $H(X) = -\\sum p(x) \\log_2 p(x)$.
+  $$H(X) = -\\sum_{{i=1}}^{{n}} p(x_i) \\log_2 p(x_i)$$
+
+Bad:
+  The formula is `H = -Σ p log p` (code block, Unicode, no base).
+  H = -Σ p log₂ p  (plain text, not wrapped in $).
+
+====================
 STRUCTURE
 ====================
 
@@ -42,6 +64,13 @@ When you're explaining a process, loop, or comparison, add a Mermaid diagram.
 - Use ```mermaid graph LR for comparisons or relationships.
 - Every diagram needs a short caption so it's clear what you're looking at.
 - 0–2 diagrams per section. Only where they actually help.
+- Node IDs MUST NOT contain parentheses, dots, or special characters.
+  Use Label["Text Label"] syntax for nodes that need display text:
+  Good:
+      A[Probability of Event] --> B[Calculate Surprise]
+  Bad:
+      Probability(p) --> Surprise(-log(p))
+- NEVER nest square brackets. A["start with E["inner"]"] breaks Mermaid.
 
 ====================
 CALLOUTS
@@ -87,5 +116,5 @@ YOUR TASK
 ====================
 
 Turn the extracted knowledge into clear, friendly study notes.
-Return only Markdown.
+Return only Markdown. Do NOT wrap the response in ```markdown or any code fence — return raw Markdown.
 """

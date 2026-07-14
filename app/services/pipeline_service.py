@@ -4,6 +4,7 @@ from app.services.chunking_service import ChunkingService
 from app.services.ai_service import AIService
 from app.rendering.markdown_renderer import MarkdownRenderer
 from app.services.export_service import ExportService
+from app.services.quality_gate import QualityGate
 from app.models.enums import ProcessingStatus
 
 class PipelineService:
@@ -15,6 +16,7 @@ class PipelineService:
         self.chunking = ChunkingService()
         self.ai = AIService()
         self.renderer = MarkdownRenderer()
+        self.quality_gate = QualityGate(ai_service=self.ai)
         self.exporter = ExportService()
 
     def process(self, collection):
@@ -69,6 +71,7 @@ class PipelineService:
                 print(f"Merge failed: {exc}")
 
         markdown = self.renderer.render([merged_document])
+        markdown = self.quality_gate.run(markdown)
         output_file = self.exporter.export(markdown, "notes")
 
         return output_file
