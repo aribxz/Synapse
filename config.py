@@ -1,5 +1,8 @@
 # Config is the office
-import os  # Bridge between os and computer system.
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key") 
@@ -12,7 +15,7 @@ class Config:
 
     FAST_MODEL = os.getenv(
         "FAST_MODEL",
-        "qwen/qwen3-32b"
+        "llama-3.3-70b-versatile"
     )
 
     REASONING_MODEL = os.getenv(

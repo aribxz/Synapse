@@ -59,7 +59,7 @@ class GroqClient:
             }
 
         raw_content = re.sub(
-                r"<think>.*?</think>",
+                r"<think>.*?(?:</think>|$)",
                 "",
                 raw_content,
                 flags=re.DOTALL,

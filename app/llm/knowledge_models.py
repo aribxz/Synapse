@@ -33,3 +33,5 @@ class ExtractedKnowledge:
     pitfalls: list[str] = field(default_factory=list)
 
     summary: str = ""
+
+    coverage: str = "adequate"

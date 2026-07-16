@@ -51,6 +51,7 @@ class PromptBuilder:
         return LLMRequest(
             system_prompt=OUTLINE_PROMPT,
             user_prompt=user_prompt,
+            max_tokens=4096,
         )
 
     def build(
@@ -141,11 +142,22 @@ class PromptBuilder:
             user_prompt=user_prompt,
         )
     
-    def build_merge(self, sections: list[str]) -> LLMRequest:
+    def build_merge(self, sections: list[str], connections_info: str | None = None) -> LLMRequest:
         combined = "\n\n".join(sections)
 
+        extra_context = ""
+        if connections_info:
+            extra_context = f"""
+CROSS-TOPIC CONNECTIONS (from extraction)
+
+The following cross-topic relationships were identified. Use them to ensure consistent terminology and to link related sections:
+
+{connections_info}
+
+"""
+
         user_prompt = f"""
-                        Merge the following study guide sections into one polished document.
+                        {extra_context}Merge the following study guide sections into one polished document.
 
                         Study Guide Sections
 
@@ -169,58 +181,33 @@ class PromptBuilder:
     knowledge: ExtractedKnowledge,
     outline: list[OutlineTopic],
     current_topic: OutlineTopic,
-    previous_notes: str | None,
     topic_index: int,
     total_topics: int,
     ) -> LLMRequest:
 
-        knowledge_json = json.dumps(asdict(knowledge), indent=2)
-        previous = previous_notes or "None"
+        knowledge_dict = {k: v for k, v in asdict(knowledge).items() if k != "connections"}
+        knowledge_json = json.dumps(knowledge_dict, separators=(",", ":"))
         outline_text = self._format_outline(outline)
 
-        def _make_user_prompt(prev, kjson):
-            return f"""
-                            DOCUMENT OUTLINE
+        user_prompt = f"""
+                        DOCUMENT OUTLINE
 
-                            {outline_text}
+                        {outline_text}
 
-                            CURRENT TOPIC
+                        CURRENT TOPIC
 
-                            Title: {current_topic.title}
+                        Title: {current_topic.title}
 
-                            Description: {current_topic.description}
+                        Description: {current_topic.description}
 
-                            Role: {current_topic.role}
+                        Role: {current_topic.role}
 
-                            PREVIOUS SECTION
+                        Topic {topic_index + 1} of {total_topics}
 
-                            {prev}
+                        EXTRACTED KNOWLEDGE
 
-                            EXTRACTED KNOWLEDGE
-
-                            {kjson}
-                         """
-
-        user_prompt = _make_user_prompt(previous, knowledge_json)
-
-        system_est = len(TEACHING_PROMPT) // 3
-        user_budget = max(1000, (5800 - system_est - 1500) * 3)
-
-        if len(user_prompt) > user_budget:
-            if len(previous) > 3000:
-                previous = "..." + previous[-3000:]
-            user_prompt = _make_user_prompt(previous, knowledge_json)
-
-        if len(user_prompt) > user_budget:
-            if len(previous) > 2000:
-                previous = "..." + previous[-2000:]
-            user_prompt = _make_user_prompt(previous, knowledge_json)
-
-        if len(user_prompt) > user_budget:
-            excess = len(user_prompt) - user_budget
-            allowed = max(len(knowledge_json) - excess - 50, 4000)
-            knowledge_json = knowledge_json[:allowed] + "\n  ...}"
-            user_prompt = _make_user_prompt(previous, knowledge_json)
+                        {knowledge_json}
+                     """
 
         return LLMRequest(
             system_prompt=TEACHING_PROMPT,

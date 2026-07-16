@@ -24,6 +24,11 @@ Capture:
 • Mathematical formulas
 • Warnings or pitfalls
 
+Finally, assess coverage: how much did the source actually say about this topic's concepts?
+- "thin": Source barely mentioned it; most extraction fields will be sparse.
+- "adequate": Source covered the basics; most fields have meaningful content.  
+- "rich": Source went deep with explanations, examples, and nuance.
+
 Capture:
 
 {{
@@ -41,7 +46,8 @@ Capture:
     "connections": [],
     "formulas": [],
     "pitfalls": [],
-    "summary": ""
+    "summary": "",
+    "coverage": "adequate"
 }}
 
 Do NOT teach.

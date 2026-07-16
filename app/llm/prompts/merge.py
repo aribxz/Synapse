@@ -98,10 +98,26 @@ Rules:
 - Every diagram gets a short caption so it makes sense at a glance.
 - Diagrams should replace walls of text, not just repeat them.
 - Only add one if it genuinely helps — don't force it.
-- Node IDs MUST NOT contain parentheses, dots, or special characters.
-  Use Label["Text Label"] for any node with display text.
-  Correct: A[Probability of Event] --> B[Calculate Surprise]
-  Wrong:   Probability(p) --> Surprise(-log(p))
+- NODE LABELS MUST BE PLAIN ALPHANUMERIC WORDS ONLY. This is non-negotiable.
+  - NO parentheses inside labels.
+  - NO math symbols (Σ, φ, π, etc.) inside labels.
+  - NO special characters (/ & + - = etc.) inside labels.
+  - NO nested brackets like `Node[Label["inner"]]`.
+  - If a concept involves a formula, put the formula in the surrounding LaTeX prose, NOT inside a diagram node.
+
+  Bad (will break rendering):
+      W[Weighted Sum (z = Σ w·x + b)]           ← parens & math symbols
+      A[Activation f["f (z)"]]                   ← nested brackets
+      H[Hidden Layer["Layer(s)"]]                ← nested brackets
+      O[Training Time & Compute]                 ← special char &
+
+  Good (safe, renders in Obsidian):
+      W[Weighted Sum]                            ← plain words
+      A[Activation Output]                       ← plain words
+      H[Hidden Layer]                            ← plain words
+      O[Training Time and Compute]               ← plain words, "and" instead of &
+
+  Node IDs must also be simple (A, B, C, Step1, etc.). Do not use parentheses or special chars in IDs.
 
 ====================
 CALLOUTS
@@ -138,6 +154,22 @@ If the document contains a Markdown table comparing mathematical functions (e.g.
 - Pair LaTeX tables with an xychart-beta diagram showing the curves when applicable.
 
 ====================
+HEADING HIERARCHY
+====================
+
+The sections being merged may each assume they were a top-level document. Normalize them so the final document has a consistent structure:
+- The document title should be a single # heading (if present).
+- Major sections should be ##.
+- Subsections should be ###.
+- Do not mix heading levels for the same logical depth.
+
+====================
+TERMINOLOGY CONSISTENCY
+====================
+
+Enforce consistent terminology and phrasing for the same concept throughout the merged document. If one section says "learning rate" and another says "step size" for the same hyperparameter, pick one term and use it everywhere. This is especially important now that sections were generated independently without rolling context.
+
+====================
 LATEX AND NOTATION CLEANUP
 ====================
 
@@ -164,4 +196,5 @@ OUTPUT
 ====================
 
 Return only the finished Markdown document. No code blocks around it, no commentary about what you changed.
+Never wrap `$$...$$` or `$...$` math in a code fence (```latex, ```math, or any ``` fence) — write it directly in the document body. Code fences take priority in Obsidian and will show raw text instead of rendered math.
 """

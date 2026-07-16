@@ -24,6 +24,7 @@ class PipelineService:
         collection = self.processing.process(collection)
 
         generated_sections = []
+        all_connections = []
 
         for source in collection.sources:
             if (not source.raw_content
@@ -33,6 +34,7 @@ class PipelineService:
                 source.error = "No extractable text found."
 
                 print(f"Skipping {source.title}: no usable text extracted.")
+                generated_sections.append(f"## {source.title}\n\n_Could not extract text from this source._")
 
                 continue
 
@@ -47,8 +49,9 @@ class PipelineService:
                 print(f"--- OUTLINE FOR {source.title} ---")
                 print(outline)
                 print("-----------------------------------")
-                generated = self.ai.generate_from_chunks(chunks, outline)
+                generated, connections = self.ai.generate_from_chunks(chunks, outline)
                 generated_sections.extend(generated)
+                all_connections.extend(connections)
             except Exception as exc:
                 generated_sections.append(f"## {source.title}\n\nAI generation failed: {exc}")
 
@@ -61,7 +64,7 @@ class PipelineService:
             merged_document = fallback_text or "No content could be generated from the provided input."
         else:
             try:
-                merged_document = self.ai.merge_sections(generated_sections)
+                merged_document = self.ai.merge_sections(generated_sections, connections_info=all_connections)
                 print("\n========== MERGE STATS ==========")
                 print(f"Characters: {len(merged_document)}")
                 print(f"Words: {len(merged_document.split())}")

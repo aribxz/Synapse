@@ -36,6 +36,7 @@ Rules:
 - Do not explain concepts in detail.
 - Do not write study notes.
 - Return only the outline.
+- Do NOT use <think> tags or any chain-of-thought reasoning. Output only the outline in the format below.
 
 Bad example (too many tiny sections):
 
