@@ -4,6 +4,7 @@ from app.ingestion.extractors.docx_extractor import DocxExtractor
 from app.ingestion.extractors.pptx_extractor import PPTXExtractor
 from app.ingestion.extractors.youtube_extractor import YouTubeExtractor
 from app.ingestion.extractors.web_extractor import WebExtractor
+from app.ingestion.extractors.txt_extractor import TxtExtractor
 
 class ExtractorRegistry:
     def __init__(self):
@@ -12,7 +13,8 @@ class ExtractorRegistry:
             SourceType.DOCX: DocxExtractor(),
             SourceType.PPTX: PPTXExtractor(),
             SourceType.YOUTUBE: YouTubeExtractor(),
-            SourceType.WEBPAGE: WebExtractor()
+            SourceType.WEBPAGE: WebExtractor(),
+            SourceType.TXT: TxtExtractor(),
         }
 
     def get(self, source_type):

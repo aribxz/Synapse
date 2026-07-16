@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test29.md",
+                "file": "notes_test/test32.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test29"
+              "title": "test32"
             }
           }
         ]
@@ -197,20 +197,23 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
-    "notes_test/test27.md",
+    "notes_test/test31.md",
+    "notes_test/test32.md",
+    "uploads/The_Debate.docx",
+    "notes_test/test30.md",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Start Writing Prompts like a Pro (Certificate).pdf",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Speed Up Data Analysis and Presentation Building (Certificate).pdf",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Google Prompting Essentials (Certificate).pdf",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Discover The Art of Prompting (Certificate).pdf",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Design Prompts for Everyday Work Tasks (Certificate).pdf",
+    "notes_test/PDF/Certificates/Google AI Prompting Essentials",
     "notes_test/test29.md",
+    "test_txt.py",
+    "app/ingestion/extractors/__pycache__/txt_extractor.cpython-314.pyc",
+    "notes_test/test27.md",
     "notes_test/test28.md",
     "test_comprehensive.py",
-    "test_debug4.py",
-    "test_debug3.py",
-    "test_debug2.py",
-    "test_debug.py",
-    "test_regex.py",
-    "test_math_fence2.py",
-    "test_math_fence.py",
     "notes_test/test26.md",
-    "notes_test/PDF/Certificates/ML Speciliasation (Andrew Ng)/Unsupervised Learning, Recommenders and Reinforcement Learning.pdf",
-    "notes_test/PDF/Certificates/ML Speciliasation (Andrew Ng)/Machine Learning.pdf",
     "notes_test/PDF/Certificates/Misecellaneous/Kaggle Certificate.png",
     "test_output3.md",
     "test_output2.md",
@@ -231,9 +234,6 @@
     "notes_test/test21.md",
     "notes_test/test21 (1).md",
     "notes_test/test20.md",
-    "notes_test/test19.md",
-    "notes_test/test18.md",
-    "notes_test/test17.md",
     "Untitled.canvas"
   ]
 }
