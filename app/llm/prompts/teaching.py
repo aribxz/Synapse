@@ -100,11 +100,134 @@ CALLOUTS
 Sprinkle in Obsidian callouts to break things up:
 
 > [!note] Extra context or side notes
-> [!tip] Practical advice or shortcuts
-> [!warning] Things people get wrong
-> [!example] Concrete walkthroughs
+> [!tip] Practical advice or shortcuts, or "Why This Works" intuition
+> [!warning] Common mistakes — things people get wrong
+> [!danger] Critical pitfalls — things that can silently break your model
+> [!important] The single most important idea in this section
+> [!example] Concrete walkthroughs with actual numbers
+> [!success] When something is the right tool for the job
+> [!question] The core question this concept answers
+> [!info] General background (for supplemented content when coverage is thin)
 
-0–2 per section. Not every section needs one.
+0–2 per section. Not every section needs one, but use the right type when you do.
+
+====================
+DIAGRAM VARIETY
+====================
+
+Use different Mermaid chart types based on what you're showing:
+
+- `flowchart LR/TD` for step-by-step processes and loops
+- `graph LR/TD` for comparisons, relationships, and hierarchies
+- `xychart-beta` for plotting mathematical functions, curves, error trends
+  ```mermaid
+  xychart-beta
+      title "Error vs Training Examples"
+      x-axis "Training Set Size" [10, 50, 100, 500, 1000]
+      y-axis "Error" 0 --> 1.0
+      line "J_train" [0.10, 0.22, 0.30, 0.40, 0.43]
+      line "J_cv" [0.75, 0.58, 0.52, 0.47, 0.44]
+  ```
+- `pie showData` for proportions and distributions
+  ```mermaid
+  pie showData
+      title "Group Composition"
+      "Yes" : 3
+      "No" : 7
+  ```
+- `timeline` for sequences of events or ordered steps
+  ```mermaid
+  timeline
+      title Processing Pipeline
+      Step 1 : Raw data
+      Step 2 : Feature extraction
+      Step 3 : Model training
+      Step 4 : Evaluation
+  ```
+- `quadrantChart` for 2x2 classifications (Confusion Matrix style)
+
+Rules (same as DIAGRAMS section — node labels must be plain alphanumeric):
+- NO parentheses, math symbols, special chars, or nested brackets in labels
+- If a concept needs a formula, put the formula in the surrounding LaTeX text, NOT inside the diagram
+- Each diagram gets a short caption underneath
+
+====================
+HEADER ENRICHMENT
+====================
+
+Use emoji in section headings to add visual rhythm, matching personal study-note style:
+
+  ## 🗺️ Navigation
+  ## 🏗️ The Architecture
+  ### 🔧 Debugging Your Algorithm
+  ### 🍃 Leaf Node
+
+Rules:
+- One emoji per heading max, placed right after the `#` and a space.
+- The emoji should match the content (🗺️ for navigation, 🏗️ for building, 🔧 for fixing, 📊 for analysis, 💡 for insights, 🔍 for investigation, 🎯 for goals, 📦 for data, ⚡ for performance, 🌳 for trees, 🍃 for leaves/endpoints, ✅ for success, ❌ for failure).
+- Do NOT use emoji in place of words — headings must still make sense without them.
+- Do NOT overdo it. Use them only on major headings (## or ###), not every line.
+
+====================
+WORKED EXAMPLES
+====================
+
+Every major concept should include a concrete worked example:
+
+- Pick real numbers (not x, y placeholders).
+- Show the step-by-step calculation.
+- Include the intermediate values at each step.
+- Use a small data table if applicable:
+  | Person | Dosage (mg) | Effectiveness |
+  |--------|-------------|---------------|
+  | P1     | 10          | -10           |
+  | P2     | 20          | 8             |
+- Show the formula, plug in the numbers, and state the result:
+  $$G = 1 - \\left(\\frac{{1}}{{4}}\\right)^2 - \\left(\\frac{{3}}{{4}}\\right)^2 = 1 - 0.0625 - 0.5625 = 0.375$$
+- Add a Mermaid diagram showing the split / structure when helpful.
+- Add a `> [!example]` callout framing the example.
+- Add a `> [!tip]` after the result explaining what the number means intuitively.
+
+====================
+COMPARISON TABLES
+====================
+
+When contrasting multiple approaches (e.g., Ridge vs Lasso vs Elastic Net, Classification vs Regression), use side-by-side comparison tables:
+
+  | Feature | Method A | Method B | Method C |
+  |---------|----------|----------|----------|
+  | Penalty | L2       | L1       | L1 + L2  |
+  | Feature selection | x | ✓ | ✓ |
+  | Best for | Most features useful | Many useless features | Correlated features |
+
+Rules:
+- Put the comparison in context — explain what dimension you are comparing across.
+- Keep it to 3-6 rows. If you need more, split into multiple tables.
+- Use ✓ / x symbols for binary attributes.
+- Add a Mermaid `graph LR` with subgraphs for a visual version when the table has 3+ methods.
+
+====================
+INTUITION AND INSIGHTS
+====================
+
+After presenting each formula or mechanism, add one of these four patterns:
+
+1. **Why This Works (Intuition):** Explain the formula in plain terms. What does each part do? Why is it shaped this way?
+   > [!tip] The numerator measures X, the denominator controls Y. When X is large and Y is small, the score is high — meaning...
+
+2. **Common Mistake:** What do people get wrong about this?
+   > [!warning] A slope of beta_1 = 1.825 does NOT mean probability increases by 1.825 per unit. It means log-odds increase by 1.825. The effect on probability depends on where you are on the S-curve.
+
+3. **Key Insight / The Lightbulb Moment:** The single most important mental model for this concept.
+   > [!important] Maximising log-likelihood and minimising log-loss are mathematically identical. Two names, same function.
+
+4. **Counterintuitive:** Something that surprises most learners.
+   > [!danger] More data does NOT always help. If your learning curve has already flatlined (high bias), collecting more data is a waste of time.
+
+Rules:
+- One insight per formula, not one per paragraph.
+- Pick the type that best fits (tip / warning / important / danger).
+- Do not just re-state the formula — explain WHY it makes sense.
 
 ====================
 INTERNAL LINKS
@@ -201,6 +324,60 @@ Key patterns demonstrated here:
 - Callouts break up dense content without cluttering the narrative
 - Wiki-link connects to related section instead of repeating
 - No "in this section" or "as previously discussed" — just writes the material
+- **Uses `> [!warning]` for common trap and `> [!tip]` for actionable advice**
+
+====================
+NAVIGATION AND STRUCTURE
+====================
+
+Every section you write should assume it will be part of a larger document. Include:
+
+1. **Navigation hints at the top of your output** — a mini ToC linking to subsections you cover:
+   **In this section:** [[#Subsection A|Subsection A]] · [[#Subsection B|Subsection B]] · [[#Subsection C|Subsection C]]
+
+2. **Progressive disclosure** — start with the core idea (the "why"), then build complexity step by step.
+
+3. **Part/Section numbering** — if your section is large, use ## Part I — Title, ## Part II — Title headings with clear subsections.
+
+====================
+BIG PICTURE AND DECISION FLOW
+====================
+
+If your section covers a complete workflow or algorithm, end with:
+
+1. **Big Picture Flowchart** — a `flowchart TD` or `graph TD` that shows the full pipeline from raw input to final output, with decision points.
+2. **Decision Flowchart** — a practical "what should I do next?" diagram for the user to reference when applying this concept.
+
+Example for a decision-tree-like algorithm:
+```mermaid
+flowchart TD
+    A[Compute J_train, J_cv, Baseline] --> B{{J_train >> Baseline?}}
+    B -->|Yes| C[High Bias — Underfitting]
+    B -->|No| D{{J_cv >> J_train?}}
+    D -->|Yes| E[High Variance — Overfitting]
+    D -->|No| F[Well Fitting — Do Error Analysis]
+```
+
+====================
+MASTER GLOSSARY
+====================
+
+If your section introduces 3+ technical terms, end with a glossary table:
+
+| Term | Definition | Formula |
+|------|------------|---------|
+| **Gini Impurity** | Measure of how "mixed" a node is | $1-\\sum p_i^2$ |
+| **Weighted Gini** | Combined impurity of two branches | $\\frac{{n_L}}{{n}}G_L+\\frac{{n_R}}{{n}}G_R$ |
+
+Keep definitions to one line. Include the formula if it exists.
+
+====================
+SOURCES AND REFERENCES
+====================
+
+If the extracted knowledge mentions specific sources (StatQuest, Krish Naik, Hands-On ML, etc.), end with a one-line source attribution:
+
+*Sources: StatQuest with Josh Starmer · Krish Naik ML Playlist · Hands-On ML (Aurélien Géron)*
 
 ====================
 YOUR TASK

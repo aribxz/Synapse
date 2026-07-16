@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test32.md",
+                "file": "notes_test/test34.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test32"
+              "title": "test34"
             }
           }
         ]
@@ -197,22 +197,24 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
-    "notes_test/test31.md",
+    "notes_test/test33.md",
+    "notes_test/test34.md",
+    "app/llm/__pycache__/gemini_client.cpython-314.pyc",
     "notes_test/test32.md",
-    "uploads/The_Debate.docx",
+    "tests/__pycache__/test_youtube_extractor.cpython-314-pytest-9.1.1.pyc",
+    "tests/__pycache__/test_routes.cpython-314-pytest-9.1.1.pyc",
+    "tests/__pycache__/test_pipeline_service.cpython-314-pytest-9.1.1.pyc",
+    "app/llm/__pycache__/extraction_parser.cpython-314.pyc",
+    "app/llm/__pycache__/knowledge_models.cpython-314.pyc",
+    "app/llm/__pycache__/outline_parser.cpython-314.pyc",
+    "app/llm/prompts/__pycache__/__init__.cpython-314.pyc",
+    "app/llm/prompts/__pycache__/teaching.cpython-314.pyc",
+    "app/llm/prompts/__pycache__/study_notes.cpython-314.pyc",
+    "notes_test/test31.md",
     "notes_test/test30.md",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Start Writing Prompts like a Pro (Certificate).pdf",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Speed Up Data Analysis and Presentation Building (Certificate).pdf",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Google Prompting Essentials (Certificate).pdf",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Discover The Art of Prompting (Certificate).pdf",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials/Design Prompts for Everyday Work Tasks (Certificate).pdf",
-    "notes_test/PDF/Certificates/Google AI Prompting Essentials",
     "notes_test/test29.md",
-    "test_txt.py",
-    "app/ingestion/extractors/__pycache__/txt_extractor.cpython-314.pyc",
     "notes_test/test27.md",
     "notes_test/test28.md",
-    "test_comprehensive.py",
     "notes_test/test26.md",
     "notes_test/PDF/Certificates/Misecellaneous/Kaggle Certificate.png",
     "test_output3.md",
@@ -232,8 +234,6 @@
     "notes_test/test23 (1).md",
     "notes_test/test22.md",
     "notes_test/test21.md",
-    "notes_test/test21 (1).md",
-    "notes_test/test20.md",
     "Untitled.canvas"
   ]
 }

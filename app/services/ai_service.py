@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pprint import pprint
 
 from app.llm.client import GroqClient
+from app.llm.gemini_client import GeminiClient
 from app.llm.prompt_builder import PromptBuilder
 from app.llm.outline_parser import OutlineParser
 from app.llm.extraction_parser import ExtractionParser
@@ -22,10 +23,18 @@ GROQ_TPM_LIMITS = {
 class AIService:
     def __init__(self):
         self._groq = GroqClient()
+        self._use_gemini = Config.LLM_PROVIDER == "gemini"
+        self._gemini = GeminiClient() if self._use_gemini else None
 
         self.prompt_builder = PromptBuilder()
         self._groq_tpm_windows: dict[str, list] = {}
         self._groq_tpm_lock = threading.Lock()
+
+    def _generate_fast(self, request):
+        """Route FAST_MODEL calls to Gemini or Groq based on LLM_PROVIDER."""
+        if self._use_gemini:
+            return self._gemini.generate(request, model=Config.FAST_MODEL)
+        return self._groq.generate(request, model=Config.FAST_MODEL)
 
     def _tpm_key(self, model: str) -> str:
         return GROQ_TPM_LIMITS.get(model, "default")
@@ -60,9 +69,11 @@ class AIService:
         source_text = self._collect_topic_text(topic, chunks)
         extraction_request = self.prompt_builder.build_extraction(source_text)
         est = (len(extraction_request.system_prompt) + len(extraction_request.user_prompt)) // 3 + 2048
-        self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
-        raw_response = self._groq.generate(extraction_request, model=Config.FAST_MODEL)
-        self._track_groq_usage(raw_response.usage, model=Config.FAST_MODEL)
+        if not self._use_gemini:
+            self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
+        raw_response = self._generate_fast(extraction_request)
+        if not self._use_gemini:
+            self._track_groq_usage(raw_response.usage, model=Config.FAST_MODEL)
         knowledge = ExtractionParser().parse(raw_response.raw_output)
         return topic_index, topic, knowledge, source_text
 
@@ -164,9 +175,11 @@ class AIService:
     def generate_outline(self, chunks):
         request = self.prompt_builder.build_outline(chunks)
         est = (len(request.system_prompt) + len(request.user_prompt)) // 3
-        self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
-        response = self._groq.generate(request, model=Config.FAST_MODEL)
-        self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
+        if not self._use_gemini:
+            self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
+        response = self._generate_fast(request)
+        if not self._use_gemini:
+            self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
 
         print("\n" + "=" * 80)
         print("RAW OUTLINE")
@@ -212,9 +225,11 @@ class AIService:
             system_prompt=REPAIR_PROMPT,
             user_prompt=f"Issue: [{issue_category}] {issue_message}\n\nBroken block:\n{broken_block}",
         )
-        self._wait_for_groq_tpm(500, model=Config.FAST_MODEL)
-        response = self._groq.generate(request, model=Config.FAST_MODEL)
-        self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
+        if not self._use_gemini:
+            self._wait_for_groq_tpm(500, model=Config.FAST_MODEL)
+        response = self._generate_fast(request)
+        if not self._use_gemini:
+            self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
         return response.raw_output
 
     def _collect_topic_text(self, topic, chunks):

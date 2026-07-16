@@ -126,11 +126,134 @@ CALLOUTS
 Break up dense parts with Obsidian callouts:
 
 > [!note] Side notes or background
-> [!tip] Practical suggestions
+> [!tip] Practical suggestions, or "Why This Works" intuition
 > [!warning] Common mistakes
-> [!example] Concrete examples
+> [!danger] Critical pitfalls — things that can silently break your model
+> [!important] The single most important idea in this section
+> [!example] Concrete walkthroughs with actual numbers
+> [!success] When something is the right tool for the job
+> [!question] The core question this concept answers
+> [!info] General background (for supplemented content when coverage is thin)
 
 Spread 3–6 across the whole document. Don't overdo it.
+
+====================
+DIAGRAM VARIETY
+====================
+
+Use different Mermaid chart types based on what you're showing:
+
+- `flowchart LR/TD` for step-by-step processes and loops
+- `graph LR/TD` for comparisons, relationships, and hierarchies
+- `xychart-beta` for plotting mathematical functions, curves, error trends
+  ```mermaid
+  xychart-beta
+      title "Error vs Training Examples"
+      x-axis "Training Set Size" [10, 50, 100, 500, 1000]
+      y-axis "Error" 0 --> 1.0
+      line "J_train" [0.10, 0.22, 0.30, 0.40, 0.43]
+      line "J_cv" [0.75, 0.58, 0.52, 0.47, 0.44]
+  ```
+- `pie showData` for proportions and distributions
+  ```mermaid
+  pie showData
+      title "Group Composition"
+      "Yes" : 3
+      "No" : 7
+  ```
+- `timeline` for sequences of events or ordered steps
+  ```mermaid
+  timeline
+      title Processing Pipeline
+      Step 1 : Raw data
+      Step 2 : Feature extraction
+      Step 3 : Model training
+      Step 4 : Evaluation
+  ```
+- `quadrantChart` for 2x2 classifications (Confusion Matrix style)
+
+Rules (same as DIAGRAMS section — node labels must be plain alphanumeric):
+- NO parentheses, math symbols, special chars, or nested brackets in labels
+- If a concept needs a formula, put the formula in the surrounding LaTeX text, NOT inside the diagram
+- Each diagram gets a short caption underneath
+
+====================
+HEADER ENRICHMENT
+====================
+
+Use emoji in section headings to add visual rhythm, matching personal study-note style:
+
+  ## 🗺️ Navigation
+  ## 🏗️ The Architecture
+  ### 🔧 Debugging Your Algorithm
+  ### 🍃 Leaf Node
+
+Rules:
+- One emoji per heading max, placed right after the `#` and a space.
+- The emoji should match the content (🗺️ for navigation, 🏗️ for building, 🔧 for fixing, 📊 for analysis, 💡 for insights, 🔍 for investigation, 🎯 for goals, 📦 for data, ⚡ for performance, 🌳 for trees, 🍃 for leaves/endpoints, ✅ for success, ❌ for failure).
+- Do NOT use emoji in place of words — headings must still make sense without them.
+- Do NOT overdo it. Use them only on major headings (## or ###), not every line.
+
+====================
+WORKED EXAMPLES
+====================
+
+Every major concept should include a concrete worked example:
+
+- Pick real numbers (not x, y placeholders).
+- Show the step-by-step calculation.
+- Include the intermediate values at each step.
+- Use a small data table if applicable:
+  | Person | Dosage (mg) | Effectiveness |
+  |--------|-------------|---------------|
+  | P1     | 10          | -10           |
+  | P2     | 20          | 8             |
+- Show the formula, plug in the numbers, and state the result:
+  $$G = 1 - \\left(\\frac{1}{4}\\right)^2 - \\left(\\frac{3}{4}\\right)^2 = 1 - 0.0625 - 0.5625 = 0.375$$
+- Add a Mermaid diagram showing the split / structure when helpful.
+- Add a `> [!example]` callout framing the example.
+- Add a `> [!tip]` after the result explaining what the number means intuitively.
+
+====================
+COMPARISON TABLES
+====================
+
+When contrasting multiple approaches (e.g., Ridge vs Lasso vs Elastic Net, Classification vs Regression), use side-by-side comparison tables:
+
+  | Feature | Method A | Method B | Method C |
+  |---------|----------|----------|----------|
+  | Penalty | L2       | L1       | L1 + L2  |
+  | Feature selection | x | ✓ | ✓ |
+  | Best for | Most features useful | Many useless features | Correlated features |
+
+Rules:
+- Put the comparison in context — explain what dimension you are comparing across.
+- Keep it to 3-6 rows. If you need more, split into multiple tables.
+- Use ✓ / x symbols for binary attributes.
+- Add a Mermaid `graph LR` with subgraphs for a visual version when the table has 3+ methods.
+
+====================
+INTUITION AND INSIGHTS
+====================
+
+After presenting each formula or mechanism, add one of these four patterns:
+
+1. **Why This Works (Intuition):** Explain the formula in plain terms. What does each part do? Why is it shaped this way?
+   > [!tip] The numerator measures X, the denominator controls Y. When X is large and Y is small, the score is high — meaning...
+
+2. **Common Mistake:** What do people get wrong about this?
+   > [!warning] A slope of beta_1 = 1.825 does NOT mean probability increases by 1.825 per unit. It means log-odds increase by 1.825. The effect on probability depends on where you are on the S-curve.
+
+3. **Key Insight / The Lightbulb Moment:** The single most important mental model for this concept.
+   > [!important] Maximising log-likelihood and minimising log-loss are mathematically identical. Two names, same function.
+
+4. **Counterintuitive:** Something that surprises most learners.
+   > [!danger] More data does NOT always help. If your learning curve has already flatlined (high bias), collecting more data is a waste of time.
+
+Rules:
+- One insight per formula, not one per paragraph.
+- Pick the type that best fits (tip / warning / important / danger).
+- Do not just re-state the formula — explain WHY it makes sense.
 
 ====================
 LATEX TABLES
@@ -190,6 +313,71 @@ FLOW
 - Remove "in this section," "as covered above," and similar filler.
 - Make sure headings follow a clean hierarchy (## then ###).
 - The end result should read like one continuous explanation, not patched-together drafts.
+
+====================
+DOCUMENT STRUCTURE
+====================
+
+The final document must have these structural elements:
+
+1. **Navigation Table of Contents** at the very top (after the title), with wiki-links to all major sections:
+   **Part I — Classification Trees**
+   [[#Anatomy of a Decision Tree|Anatomy]] · [[#Gini Impurity|Gini Impurity]] · [[#Worked Example — Loves Popcorn|Worked Example]] · ...
+
+   **Part II — Feature Selection & Missing Data**
+   [[#Feature Selection|Feature Selection]] · [[#Overfitting|Overfitting]] · [[#Handling Missing Data|Missing Data]]
+
+   Include all Parts/major sections. This makes the document scannable and Obsidian-linked.
+
+2. **Part/Section numbering** — use ## Part I — Title, ## Part II — Title for major divisions, with ### subsections.
+
+3. **Horizontal rules** — `---` between major Parts, `---` then `---` (double) before Reference sections.
+
+====================
+BIG PICTURE AND DECISION FLOW
+====================
+
+Near the end of the document, add two critical diagrams:
+
+1. **Big Picture / Full Pipeline Flowchart** — a comprehensive `flowchart TD` or `graph TD` showing the complete end-to-end pipeline from raw data to final model, including all decision points, encoding steps, imputation logic, tree type selection, and pruning. This is the "one diagram that explains it all."
+
+2. **Decision Flowchart / What Should I Do Next?** — a practical flowchart for the user to reference when applying this knowledge:
+   ```mermaid
+   flowchart TD
+       A[Model not performing well enough] --> B[Compute J_train, J_cv, Baseline]
+       B --> C{J_train >> Baseline?}
+       C -->|Yes| D[High Bias — Underfitting]
+       C -->|No| E{J_cv >> J_train?}
+       E -->|Yes| F[High Variance — Overfitting]
+       E -->|No| G[Well Fitting — Do Error Analysis]
+   ```
+
+====================
+MASTER GLOSSARY
+====================
+
+At the very end (before Sources), include a comprehensive glossary table aggregating ALL key terms from the document:
+
+| Term | Definition | Formula |
+|------|------------|---------|
+| **Root Node** | The first split in a tree | — |
+| **Gini Impurity** | Measure of how "mixed" a node is | $1-\\sum p_i^2$ |
+| **Weighted Gini** | Combined impurity of two branches | $\\frac{n_L}{n}G_L+\\frac{n_R}{n}G_R$ |
+| **Overfitting** | Fits training data perfectly, fails on new data | High variance |
+| **Residual** | Observed minus predicted | $y_i-\\hat y_i$ |
+
+Rules:
+- One-line definitions. Include formula if it exists.
+- Alphabetical order preferred.
+- This serves as the definitive reference for the entire document.
+
+====================
+SOURCES AND REFERENCES
+====================
+
+End the document with a single line citing all sources referenced in the extracted knowledge:
+
+*Sources: StatQuest with Josh Starmer · Andrew Ng — Machine Learning Specialization (Coursera) · Hands-On ML with Scikit-Learn, Keras & TensorFlow (Aurélien Géron) · Krish Naik ML Playlist*
 
 ====================
 OUTPUT
