@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test40.md",
+                "file": "notes_test/test42.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test40"
+              "title": "test42"
             }
           }
         ]
@@ -197,8 +197,11 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
-    "notes_test/test39.md",
+    "notes_test/test41.md",
+    "notes_test/test42.md",
     "notes_test/test40.md",
+    "notes_test/notes (1).md",
+    "notes_test/test39.md",
     "notes_test/test38.md",
     "notes_test/test39 (1).md",
     "notes_test/notes39.md",
@@ -224,9 +227,6 @@
     "notes_test/test21.md",
     "notes_test/test36.md",
     "notes_test/test35.md",
-    "notes_test/test34.md",
-    "notes_test/test33.md",
-    "notes_test/test32.md",
     "uploads/Arib_Presentation_Script.pdf",
     "uploads/Logistic-Regression-and-Regularization.pdf",
     "app/llm/__pycache__/gemini_client.cpython-314.pyc",

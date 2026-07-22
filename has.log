@@ -363,3 +363,286 @@ Using model: openai/gpt-oss-120b
 Using model: openai/gpt-oss-120b
 Using model: openai/gpt-oss-120b
 Merge failed: Error code: 413 - {'error': {'message': 'Request too large for model `openai/gpt-oss-120b` in organization `org_01kqhyk0jtfef9b9a8g4k8jbq0` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 8492, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+--- HAS session 2026-07-22 17:38:29 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 17:38:38] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: llama) ---
+
+=== Pipeline started (fast model: llama) ===
+127.0.0.1 - - [22/Jul/2026 17:38:50] "POST /process HTTP/1.1" 200 -
+Created 2 chunks.
+Chunk 1: 1200 estimated tokens
+Chunk 2: 653 estimated tokens
+Using model: llama-3.3-70b-versatile
+Generation successful.
+
+================================================================================
+RAW OUTLINE
+================================================================================
+Topic:
+    Title: Introduction to Physics-Informed Neural Networks
+    Description: Introduces the concept of physics-informed neural networks, explaining how they combine physics with neural networks to make better predictions, even with limited data, and highlights the problem of classical neural networks.
+    Role: Motivation
+    Source Chunks: 1
+
+Topic:
+    Title: Physics-Informed Neural Network Mechanism and Example
+    Description: Explains how physics-informed neural networks work, including the incorporation of known physics into the loss function, and walks through a simple example of predicting drug concentration in the bloodstream.
+    Role: Mechanism
+    Source Chunks: 1, 2
+
+Topic:
+    Title: Training Physics-Informed Neural Networks
+    Description: Discusses the process of training physics-informed neural networks, including the use of automatic differentiation, boundary condition loss, and physics loss, and how these are combined to form a total loss.
+    Role: Procedure
+    Source Chunks: 2
+
+Topic:
+    Title: Advanced Physics-Informed Neural Network Architectures
+    Description: Mentions the existence of PIN-specific architectures that incorporate physics more directly and quotes an expert on the importance of understanding physics in the next wave of AI.
+    Role: Example
+    Source Chunks: 2
+
+Topic:
+    Title: Challenges and Limitations of Physics-Informed Neural Networks
+    Description: Briefly touches on the challenges of forming the correct differential equation and choosing the appropriate training strategy and network architecture in practice.
+    Role: Edge Case
+    Source Chunks: 2
+================================================================================
+
+--- Running 5 extractions in parallel (fast model: llama) ---
+Using model: llama-3.3-70b-versatile
+Using model: llama-3.3-70b-versatileUsing model: llama-3.3-70b-versatile
+
+Generation successful.
+Using model: llama-3.3-70b-versatile
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Introduction to Physics-Informed Neural Networks
+
+EXAMPLES:
+[]
+
+INTUITION:
+[]
+
+REASONING:
+[]
+
+WHY IT MATTERS:
+[]
+Source Chunks: [1]
+Characters: 3855
+======================================================================
+
+====================================================
+
+Generation successful.
+  Groq TPM limit (12000) for llama-3.3-70b-versatile. Waiting 58s...
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Training Physics-Informed Neural Networks
+
+EXAMPLES:
+[]
+
+INTUITION:
+[]
+
+REASONING:
+[]
+
+WHY IT MATTERS:
+[]
+Source Chunks: [2]
+Characters: 2103
+======================================================================
+
+====================================================
+
+Generation successful.
+Generation successful.
+Using model: llama-3.3-70b-versatile
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Physics-Informed Neural Network Mechanism and Example
+
+EXAMPLES:
+[]
+
+INTUITION:
+[]
+
+REASONING:
+[]
+
+WHY IT MATTERS:
+[]
+Source Chunks: [1, 2]
+Characters: 5960
+======================================================================
+
+====================================================
+
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Advanced Physics-Informed Neural Network Architectures
+
+EXAMPLES:
+[]
+
+INTUITION:
+[]
+
+REASONING:
+[]
+
+WHY IT MATTERS:
+[]
+Source Chunks: [2]
+Characters: 2103
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Challenges and Limitations of Physics-Informed Neural Networks
+
+EXAMPLES:
+[]
+
+INTUITION:
+[]
+
+REASONING:
+[]
+
+WHY IT MATTERS:
+[]
+Source Chunks: [2]
+Characters: 2103
+======================================================================
+
+====================================================
+
+
+--- Running 5 teaching calls in parallel (2 workers) ---
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b
+Generation successful.
+  Using hierarchical merge for 5 sections
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 55s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 1), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 2), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B merge failed after retries, falling back to Gemini
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 1), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 2), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B merge failed after retries, falling back to Gemini
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 1), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge (attempt 2), pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B merge failed after retries, falling back to Gemini
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+========== MERGE STATS ==========
+Characters: 7604
+Words: 1061
+=================================
+
