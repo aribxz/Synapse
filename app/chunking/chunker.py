@@ -40,9 +40,9 @@ class Chunker:
                     estimated_tokens=current_tokens
                 )
             )
-        print(f"Created {len(chunks)} chunks.")
+        print(f"Created {len(chunks)} chunks.", flush=True)
 
         for chunk in chunks:
-            print(f"Chunk {chunk.id}: {chunk.estimated_tokens} estimated tokens")
+            print(f"Chunk {chunk.id}: {chunk.estimated_tokens} estimated tokens", flush=True)
             
         return chunks

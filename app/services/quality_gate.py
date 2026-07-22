@@ -32,7 +32,7 @@ _UNICODE_REPLACEMENTS = {
 def _safe_print(msg: str):
     for old, new in _UNICODE_REPLACEMENTS.items():
         msg = msg.replace(old, new)
-    print(msg)
+    print(msg, flush=True)
 
 
 class QualityGate:

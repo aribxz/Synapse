@@ -17,9 +17,9 @@ def home():
 
 @main_bp.route("/process", methods=["POST"])
 def process():
-    print("--- Starting Processing Pipeline ---")
+    print("--- Starting Processing Pipeline ---", flush=True)
     output_file = controller.process_request(request)
-    print(f"--- Extraction Finished, Processing sources ---")
+    print(f"--- Extraction Finished, Processing sources ---", flush=True)
 
     return send_file(
         output_file,

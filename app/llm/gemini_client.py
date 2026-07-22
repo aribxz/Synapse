@@ -31,7 +31,7 @@ class GeminiClient:
         reraise=True,
     )
     def generate(self, request: LLMRequest, model: str):
-        print(f"Using model: {model}")
+        print(f"Using model: {model}", flush=True)
 
         config_kwargs = dict(
             system_instruction=request.system_prompt,
@@ -45,7 +45,7 @@ class GeminiClient:
             config=types.GenerateContentConfig(**config_kwargs),
         )
 
-        print("Generation successful.")
+        print("Generation successful.", flush=True)
 
         raw_content = response.text or ""
 

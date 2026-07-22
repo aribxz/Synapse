@@ -33,7 +33,7 @@ class PipelineService:
                 source.status = ProcessingStatus.FAILED
                 source.error = "No extractable text found."
 
-                print(f"Skipping {source.title}: no usable text extracted.")
+                print(f"Skipping {source.title}: no usable text extracted.", flush=True)
                 generated_sections.append(f"## {source.title}\n\n_Could not extract text from this source._")
 
                 continue
@@ -46,9 +46,9 @@ class PipelineService:
 
             try:
                 outline = self.ai.generate_outline(chunks)
-                print(f"--- OUTLINE FOR {source.title} ---")
-                print(outline)
-                print("-----------------------------------")
+                print(f"--- OUTLINE FOR {source.title} ---", flush=True)
+                print(outline, flush=True)
+                print("-----------------------------------", flush=True)
                 generated, connections = self.ai.generate_from_chunks(chunks, outline)
                 generated_sections.extend(generated)
                 all_connections.extend(connections)
@@ -65,13 +65,13 @@ class PipelineService:
         else:
             try:
                 merged_document = self.ai.merge_sections(generated_sections, connections_info=all_connections)
-                print("\n========== MERGE STATS ==========")
-                print(f"Characters: {len(merged_document)}")
-                print(f"Words: {len(merged_document.split())}")
-                print("=================================\n")
+                print("\n========== MERGE STATS ==========", flush=True)
+                print(f"Characters: {len(merged_document)}", flush=True)
+                print(f"Words: {len(merged_document.split())}", flush=True)
+                print("=================================\n", flush=True)
             except Exception as exc:
                 merged_document = "\n\n".join(generated_sections)
-                print(f"Merge failed: {exc}")
+                print(f"Merge failed: {exc}", flush=True)
 
         markdown = self.renderer.render([merged_document])
         markdown = self.quality_gate.run(markdown)

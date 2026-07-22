@@ -205,19 +205,29 @@ class AIService:
             self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
             return response.raw_output
 
+        # For 4+ sections, use hierarchical merge (groups of 2-3, then merge results)
+        if len(sections) > 4:
+            print(f"  Using hierarchical merge for {len(sections)} sections")
+            merged = []
+            group_size = 3
+            for i in range(0, len(sections), group_size):
+                group = sections[i:i + group_size]
+                if len(group) == 1:
+                    merged.append(group[0])
+                else:
+                    merged.append(_try_merge(group))
+            if len(merged) > 1:
+                return _try_merge(merged)
+            return merged[0]
+
+        # For 3 or fewer, try single merge first
         try:
             return _try_merge(sections)
         except Exception as e:
             if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
                 raise
-            print("  Merge too large, retrying with half-size sections")
+            print("  Merge too large, retrying with truncated sections")
             truncated = [s[:max(len(s) // 2, 100)] for s in sections]
-            if len(sections) > 4:
-                print("  Attempting hierarchical merge (pairwise)")
-                mid = len(sections) // 2
-                left = _try_merge(sections[:mid])
-                right = _try_merge(sections[mid:])
-                return _try_merge([left, right])
             return _try_merge(truncated)
 
     def repair_block(self, broken_block: str, issue_category: str, issue_message: str) -> str:

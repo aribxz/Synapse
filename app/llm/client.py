@@ -26,7 +26,7 @@ class GroqClient:
     )
 
     def generate(self, request: LLMRequest, model: str):
-        print(f"Using model: {model}")
+        print(f"Using model: {model}", flush=True)
 
         kwargs = dict(
             model=model,
@@ -45,7 +45,7 @@ class GroqClient:
             kwargs["max_tokens"] = request.max_tokens
         response = self.client.chat.completions.create(**kwargs)
         
-        print("Generation successful.")
+        print("Generation successful.", flush=True)
         
         raw_content = response.choices[0].message.content or "" 
         # We get huge data back from groq, choices is the list of possible replies, message is the part that contains text and content extracts that text. 
