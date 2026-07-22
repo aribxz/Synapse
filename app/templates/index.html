@@ -117,7 +117,7 @@
     position:relative;
     transition: color 0.3s var(--ease-soft);
   }
-  .nav-links a:not(.nav-gh)::after{
+  .nav-links a::after{
     content:'';
     position:absolute;
     left:0; bottom:-4px;
@@ -125,18 +125,8 @@
     background: var(--green);
     transition: width 0.35s var(--ease);
   }
-  .nav-links a:not(.nav-gh):hover{ color: var(--ink); }
-  .nav-links a:not(.nav-gh):hover::after{ width:100%; }
-  .nav-gh{
-    display:flex; align-items:center; gap:6px;
-    color: var(--ink);
-    padding:8px 14px;
-    border-radius:20px;
-    border:1px solid var(--line);
-    transition: all 0.3s var(--ease-soft);
-  }
-  .nav-gh:hover{ border-color: var(--green); background: var(--green-wash); transform: translateY(-1px); }
-  .nav-gh svg{ width:15px; height:15px; }
+  .nav-links a:hover{ color: var(--ink); }
+  .nav-links a:hover::after{ width:100%; }
 
   @media (max-width: 640px){
     .nav-links{ gap:16px; font-size:0.82rem; }
@@ -652,6 +642,71 @@
     .upload-card{ padding: 26px; }
   }
 
+  /* ---------- MODEL TOGGLE ---------- */
+  .model-toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 14px;
+    margin-top: 24px;
+    flex-wrap:wrap;
+  }
+  .model-toggle-label{
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap: 7px;
+    letter-spacing: -0.01em;
+  }
+  .model-toggle-label svg{
+    width: 15px; height: 15px;
+    color: var(--green);
+  }
+  .model-toggle-switch{
+    display:flex;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+    transition: border-color 0.3s var(--ease-soft);
+  }
+  .model-toggle-switch:hover{
+    border-color: var(--gray-soft);
+  }
+  .toggle-opt{
+    padding: 7px 18px;
+    border: none;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    background: transparent;
+    color: var(--gray);
+    transition: all 0.3s var(--ease-soft);
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .toggle-opt:hover{
+    color: var(--ink);
+  }
+  .toggle-opt.active{
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(45,106,79,0.25);
+  }
+  .toggle-opt.active:hover{
+    background: var(--green-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(45,106,79,0.3);
+  }
+  .toggle-opt:active{
+    transform: scale(0.97);
+  }
+
   /* ---------- OUTPUT PREVIEW ---------- */
   .preview-wrap{
     display:flex;
@@ -753,13 +808,9 @@
       <span>Hybrid&nbsp;Assistant</span>
     </div>
     <div class="nav-links">
-      <a href="#process">How it works</a>
-      <a href="#sources" class="hide-mobile">Sources</a>
+      <a href="/">Home</a>
+      <a href="/about" class="hide-mobile">About</a>
       <a href="#upload" class="hide-mobile">Try it</a>
-      <a href="#" class="nav-gh" aria-label="View on GitHub">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.18 1.83 1.18 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .31.21.67.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
-        GitHub
-      </a>
     </div>
   </nav>
 </header>
@@ -778,7 +829,7 @@
         Try it
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
-      <button class="btn btn-outline" onclick="document.getElementById('process').scrollIntoView({behavior:'smooth'})">How it works</button>
+      <button class="btn btn-outline" onclick="window.location.href='/'">Home</button>
     </div>
 
     <div class="hero-visual reveal in-view reveal-4">
@@ -912,6 +963,18 @@
           </div>
         </div>
 
+        <div class="model-toggle-row">
+          <div class="model-toggle-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Fast model
+          </div>
+          <div class="model-toggle-switch" id="modelToggle">
+            <button class="toggle-opt active" data-value="gemini" type="button">Gemini Flash Lite</button>
+            <button class="toggle-opt" data-value="llama" type="button">Llama 3.3 70B</button>
+          </div>
+          <input type="hidden" name="fast_model" id="fastModelInput" value="gemini">
+        </div>
+
         <div class="generate-row">
           <button class="btn btn-primary btn-generate" id="generateBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
@@ -978,9 +1041,9 @@
 
 <footer>
   <div class="footer-inner">
-    <p>Built with Flask · Groq · Gemini · Obsidian</p>
+    <p>Built with Flask · Groq · Gemini · Arib</p>
     <div class="footer-links">
-      <a href="#">About</a>
+      <a href="/about">About</a>
       <a href="#">GitHub</a>
       <a href="#upload">Try it</a>
     </div>
@@ -1077,7 +1140,21 @@
     renderFiles();
   });
 
-  // Generate flow
+  // Model toggle
+  const modelToggle = document.getElementById('modelToggle');
+  const fastModelInput = document.getElementById('fastModelInput');
+  if (modelToggle){
+    modelToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('.toggle-opt');
+      if (!btn) return;
+      modelToggle.querySelectorAll('.toggle-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      fastModelInput.value = btn.dataset.value;
+      console.log(`[HAS] Fast model: ${btn.dataset.value}`);
+    });
+  }
+
+  // Generate flow (streaming progress from server)
   const generateBtn = document.getElementById('generateBtn');
   const urlInput = document.getElementById('urlInput');
   const statusArea = document.getElementById('statusArea');
@@ -1086,19 +1163,11 @@
   const statusError = document.getElementById('statusError');
   const statusSuccess = document.getElementById('statusSuccess');
 
-  const stages = [
-    { pct: 22, msg: 'Extracting content...' },
-    { pct: 55, msg: 'Analyzing with Groq & Gemini...' },
-    { pct: 82, msg: 'Generating notes...' },
-    { pct: 100, msg: 'Finalizing...' }
-  ];
-
   const form = document.getElementById('uploadForm');
   if (!form) { document.body.style.border = '5px solid red'; return; }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // Visual flash to confirm click registered
     generateBtn.style.transform = 'scale(0.97)';
     setTimeout(() => generateBtn.style.transform = '', 150);
     console.log('[HAS] Generate clicked');
@@ -1120,47 +1189,80 @@
     generateBtn.disabled = true;
     statusArea.classList.add('visible');
     progressFill.style.width = '0%';
+    statusText.innerHTML = `<span class="pulse-dot"></span> Starting...`;
 
     const formData = new FormData();
     filesArr.forEach(f => formData.append('files', f));
     formData.append('urls', urls.join('\n'));
-
-    let stageIndex = 0;
-    const advance = () => {
-      if (stageIndex < stages.length){
-        statusText.innerHTML = `<span class="pulse-dot"></span> ${stages[stageIndex].msg}`;
-        progressFill.style.width = stages[stageIndex].pct + '%';
-        stageIndex++;
-      }
-    };
-    advance();
-    const stageTimer = setInterval(advance, 900);
+    formData.append('fast_model', document.getElementById('fastModelInput').value);
 
     try{
       console.log('[HAS] POSTing to /process');
       const res = await fetch('/process', { method: 'POST', body: formData });
-      clearInterval(stageTimer);
-      progressFill.style.width = '100%';
 
       if (!res.ok){
         const errText = await res.text().catch(() => 'unknown');
         throw new Error(`Server returned ${res.status}: ${errText}`);
       }
 
-      const blob = await res.blob();
-      const a = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      a.href = url;
-      a.download = 'notes.md';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fileContent = null;
+      let fileName = 'notes.md';
 
-      statusText.innerHTML = `<span class="pulse-dot"></span> Done`;
-      statusSuccess.classList.add('visible');
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const data = JSON.parse(line);
+            if (data.type === 'file') {
+              fileContent = data.content;
+              fileName = data.filename || 'notes.md';
+            } else {
+              progressFill.style.width = data.pct + '%';
+              const titleHtml = data.title ? ` <em style="color:var(--green)">${data.title}</em>` : '';
+              statusText.innerHTML = `<span class="pulse-dot"></span> ${data.msg}${titleHtml}`;
+            }
+          } catch (parseErr) {
+            console.warn('[HAS] Failed to parse stream line:', line, parseErr);
+          }
+        }
+      }
+
+      if (buffer.trim()) {
+        try {
+          const data = JSON.parse(buffer);
+          if (data.type === 'file') {
+            fileContent = data.content;
+            fileName = data.filename || 'notes.md';
+          }
+        } catch (parseErr) {}
+      }
+
+      if (fileContent !== null) {
+        const blob = new Blob([fileContent], { type: 'text/markdown' });
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        progressFill.style.width = '100%';
+        statusText.innerHTML = `<span class="pulse-dot"></span> Done`;
+        statusSuccess.classList.add('visible');
+      } else {
+        throw new Error('No file content received from server');
+      }
     } catch (err){
-      clearInterval(stageTimer);
       console.error('[HAS] Generation failed:', err);
       statusError.textContent = err.message.includes('Server returned')
         ? `Server error (${err.message}) — check terminal for details.`

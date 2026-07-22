@@ -17,24 +17,26 @@ from config import Config
 GROQ_TPM_LIMITS = {
     "llama-3.3-70b-versatile": 12000,
     "openai/gpt-oss-120b": 8000,
-}  # per-model on Groq on_demand tier
+}
+
+LLAMA_MODEL = "llama-3.3-70b-versatile"  # per-model on Groq on_demand tier
 
 
 class AIService:
     def __init__(self):
         self._groq = GroqClient()
-        self._use_gemini = Config.LLM_PROVIDER == "gemini"
-        self._gemini = GeminiClient() if self._use_gemini else None
+        self._gemini = GeminiClient()
 
         self.prompt_builder = PromptBuilder()
         self._groq_tpm_windows: dict[str, list] = {}
         self._groq_tpm_lock = threading.Lock()
+        self._fallback_msgs: list[str] = []
+        self._fallback_msgs_lock = threading.Lock()
 
-    def _generate_fast(self, request):
-        """Route FAST_MODEL calls to Gemini or Groq based on LLM_PROVIDER."""
-        if self._use_gemini:
-            return self._gemini.generate(request, model=Config.FAST_MODEL)
-        return self._groq.generate(request, model=Config.FAST_MODEL)
+    def _generate_fast(self, request, fast_model="gemini"):
+        if fast_model == "gemini":
+            return self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL)
+        return self._groq.generate(request, model=LLAMA_MODEL)
 
     def _tpm_key(self, model: str) -> str:
         return GROQ_TPM_LIMITS.get(model, "default")
@@ -63,17 +65,15 @@ class AIService:
                 window = self._groq_tpm_windows.setdefault(key, [])
                 window.append((time.time(), usage["total_tokens"]))
 
-    def _run_extraction(self, topic_index: int, topic, chunks):
-        """Run extraction for one topic. Meant to be called from threads."""
-
+    def _run_extraction(self, topic_index: int, topic, chunks, fast_model="gemini"):
         source_text = self._collect_topic_text(topic, chunks)
         extraction_request = self.prompt_builder.build_extraction(source_text)
         est = (len(extraction_request.system_prompt) + len(extraction_request.user_prompt)) // 3 + 2048
-        if not self._use_gemini:
-            self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
-        raw_response = self._generate_fast(extraction_request)
-        if not self._use_gemini:
-            self._track_groq_usage(raw_response.usage, model=Config.FAST_MODEL)
+        if fast_model != "gemini":
+            self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
+        raw_response = self._generate_fast(extraction_request, fast_model=fast_model)
+        if fast_model != "gemini":
+            self._track_groq_usage(raw_response.usage, model=LLAMA_MODEL)
         knowledge = ExtractionParser().parse(raw_response.raw_output)
         return topic_index, topic, knowledge, source_text
 
@@ -97,7 +97,7 @@ class AIService:
         print("\n====================================================\n")
 
     def _run_teaching(self, topic_index: int, topic, outline, knowledge, total_topics):
-        """Run teaching for one topic. Meant to be called from threads."""
+        """Run teaching for one topic. Falls back to Llama 3.3 70B if OSS-120B hits rate limit."""
         req = self.prompt_builder.build_teaching(
             knowledge=knowledge,
             outline=outline,
@@ -108,23 +108,36 @@ class AIService:
         req.max_tokens = 1500
         est = (len(req.system_prompt) + len(req.user_prompt)) // 3 + 1500
         self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
-        response = self._groq.generate(req, model=Config.REASONING_MODEL)
-        self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
-        return topic_index, response.raw_output
+        try:
+            response = self._groq.generate(req, model=Config.REASONING_MODEL)
+            self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
+            return topic_index, response.raw_output
+        except Exception as e:
+            if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
+                raise
+            msg = f"OSS-120B rate limit hit for '{topic.title}', switching to Llama 3.3 70B"
+            print(f"  {msg}", flush=True)
+            with self._fallback_msgs_lock:
+                self._fallback_msgs.append(msg)
+            self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
+            response = self._groq.generate(req, model=LLAMA_MODEL)
+            self._track_groq_usage(response.usage, model=LLAMA_MODEL)
+            return topic_index, response.raw_output
 
-    def generate_from_chunks(self, chunks, outline):
+    def generate_from_chunks(self, chunks, outline, fast_model="gemini"):
         total_topics = len(outline)
 
         # ---- Phase 1: All extractions in parallel ----
-        print(f"\n--- Running {len(outline)} extractions in parallel ---")
+        print(f"\n--- Running {len(outline)} extractions in parallel (fast model: {fast_model}) ---")
         extraction_results: list = [None] * len(outline)
 
         with ThreadPoolExecutor(max_workers=3) as executor:
             future_map = {
-                executor.submit(self._run_extraction, idx, topic, chunks): idx
+                executor.submit(self._run_extraction, idx, topic, chunks, fast_model): idx
                 for idx, topic in enumerate(outline)
             }
 
+            completed = 0
             for future in as_completed(future_map):
                 idx = future_map[future]
                 try:
@@ -134,10 +147,13 @@ class AIService:
                 except Exception as e:
                     print(f"Extraction failed for topic {idx} ({outline[idx].title}): {e}")
                     extraction_results[idx] = None
+                completed += 1
+                yield "progress", f"Extracting: {outline[idx].title}", outline[idx].title, (completed / total_topics) * 40
 
         # ---- Phase 2: Parallel teaching (independent now that previous_notes is removed) ----
         print(f"\n--- Running {len(outline)} teaching calls in parallel (2 workers) ---")
         teaching_results: list = [None] * len(outline)
+        valid_count = sum(1 for r in extraction_results if r is not None)
 
         with ThreadPoolExecutor(max_workers=2) as executor:
             future_map = {}
@@ -151,6 +167,7 @@ class AIService:
                 )
                 future_map[future] = idx
 
+            completed = 0
             for future in as_completed(future_map):
                 idx = future_map[future]
                 try:
@@ -159,6 +176,15 @@ class AIService:
                 except Exception as e:
                     print(f"Teaching failed for topic {idx} ({outline[idx].title}): {e}")
                     teaching_results[idx] = None
+                completed += 1
+                if valid_count > 0:
+                    yield "progress", f"Teaching: {outline[idx].title}", outline[idx].title, 40 + (completed / valid_count) * 60
+
+        with self._fallback_msgs_lock:
+            fallbacks = list(self._fallback_msgs)
+            self._fallback_msgs.clear()
+        for fb in fallbacks:
+            yield "progress", fb, "", 99
 
         # Collect outputs in order, extract connections for merge pass
         outputs = []
@@ -172,14 +198,14 @@ class AIService:
 
         return outputs, connections_list
 
-    def generate_outline(self, chunks):
+    def generate_outline(self, chunks, fast_model="gemini"):
         request = self.prompt_builder.build_outline(chunks)
         est = (len(request.system_prompt) + len(request.user_prompt)) // 3
-        if not self._use_gemini:
-            self._wait_for_groq_tpm(est, model=Config.FAST_MODEL)
-        response = self._generate_fast(request)
-        if not self._use_gemini:
-            self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
+        if fast_model != "gemini":
+            self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
+        response = self._generate_fast(request, fast_model=fast_model)
+        if fast_model != "gemini":
+            self._track_groq_usage(response.usage, model=LLAMA_MODEL)
 
         print("\n" + "=" * 80)
         print("RAW OUTLINE")
@@ -189,21 +215,39 @@ class AIService:
 
         return OutlineParser().parse(response.raw_output)
 
-    def merge_sections(self, sections, connections_info: list[str] | None = None):
+    def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
         max_output = 4096
 
         connections_text = None
         if connections_info:
             connections_text = "\n".join(f"- {c}" for c in connections_info)
 
-        def _try_merge(secs):
+        def _try_merge(secs, attempt=1):
             request = self.prompt_builder.build_merge(secs, connections_info=connections_text)
             request.max_tokens = max_output
             est = (len(request.system_prompt) + len(request.user_prompt)) // 3 + max_output
             self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
-            response = self._groq.generate(request, model=Config.REASONING_MODEL)
-            self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
-            return response.raw_output
+            try:
+                response = self._groq.generate(request, model=Config.REASONING_MODEL)
+                self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
+                return response.raw_output
+            except Exception as e:
+                if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
+                    raise
+                if attempt >= 3:
+                    print("  OSS-120B merge failed after retries, falling back to Gemini", flush=True)
+                    if progress_callback:
+                        progress_callback("Merge rate limited on Groq, switching to Gemini...")
+                    return self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL).raw_output
+                msg = f"Rate limit hit during merge (attempt {attempt}), pausing 30s for cooldown..."
+                print(f"  {msg}", flush=True)
+                if progress_callback:
+                    progress_callback(msg)
+                time.sleep(30)
+                key = self._tpm_key(Config.REASONING_MODEL)
+                with self._groq_tpm_lock:
+                    self._groq_tpm_windows[key] = []
+                return _try_merge(secs, attempt=attempt + 1)
 
         # For 4+ sections, use hierarchical merge (groups of 2-3, then merge results)
         if len(sections) > 4:
@@ -220,26 +264,18 @@ class AIService:
                 return _try_merge(merged)
             return merged[0]
 
-        # For 3 or fewer, try single merge first
-        try:
-            return _try_merge(sections)
-        except Exception as e:
-            if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
-                raise
-            print("  Merge too large, retrying with truncated sections")
-            truncated = [s[:max(len(s) // 2, 100)] for s in sections]
-            return _try_merge(truncated)
+        return _try_merge(sections)
 
-    def repair_block(self, broken_block: str, issue_category: str, issue_message: str) -> str:
+    def repair_block(self, broken_block: str, issue_category: str, issue_message: str, fast_model="gemini") -> str:
         request = LLMRequest(
             system_prompt=REPAIR_PROMPT,
             user_prompt=f"Issue: [{issue_category}] {issue_message}\n\nBroken block:\n{broken_block}",
         )
-        if not self._use_gemini:
-            self._wait_for_groq_tpm(500, model=Config.FAST_MODEL)
-        response = self._generate_fast(request)
-        if not self._use_gemini:
-            self._track_groq_usage(response.usage, model=Config.FAST_MODEL)
+        if fast_model != "gemini":
+            self._wait_for_groq_tpm(500, model=LLAMA_MODEL)
+        response = self._generate_fast(request, fast_model=fast_model)
+        if fast_model != "gemini":
+            self._track_groq_usage(response.usage, model=LLAMA_MODEL)
         return response.raw_output
 
     def _collect_topic_text(self, topic, chunks):

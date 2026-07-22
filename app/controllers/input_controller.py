@@ -13,31 +13,29 @@ class InputController:
     def __init__(self):
         self.pipeline = PipelineService()
 
-    def process_request(self, request):
+    def process_request(self, request, fast_model="gemini"):
         collection = KnowledgeCollection()
-        
-        upload_folder = Path("uploads") # checks for a uploads folder if not creates it
-        upload_folder.mkdir(exist_ok=True) # bypass if it already exists
+
+        upload_folder = Path("uploads")
+        upload_folder.mkdir(exist_ok=True)
 
         for file in request.files.getlist("files"):
-            # getlist : I know there might be more than one item under this label, so please go ahead and gather all of them into a list for me.
-            # request.files is a html attribute
-            if file.filename == "": # if the user selected upload but there is no file
+            if file.filename == "":
                 continue
 
-            filename = secure_filename(file.filename) # security check for / characters
-            filepath = upload_folder / filename # Take this directory path and append this filename to it with the correct slash character
+            filename = secure_filename(file.filename)
+            filepath = upload_folder / filename
             file.save(filepath)
 
-            source = SourceFactory.from_upload_file(file) #Source Factory allows it to know what format it is
+            source = SourceFactory.from_upload_file(file)
             source.metadata["path"] = str(filepath)
 
-            collection.sources.append(source) 
+            collection.sources.append(source)
 
-        urls = request.form.get("urls", "") # Grabs the text from the "urls" input box on your webpage
+        urls = request.form.get("urls", "")
 
         for url in urls.splitlines():
-            url = url.strip() # removes accidental spaces
+            url = url.strip()
 
             if not url:
                 continue
@@ -47,5 +45,4 @@ class InputController:
 
             collection.sources.append(source)
 
-        output = self.pipeline.process(collection)
-        return output
+        return self.pipeline.process(collection, fast_model=fast_model)

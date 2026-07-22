@@ -53,7 +53,7 @@ class QualityGate:
         except (FileNotFoundError, subprocess.TimeoutExpired):
             return False
 
-    def _validate_mermaid(self, text: str) -> str:
+    def _validate_mermaid(self, text: str, fast_model="gemini") -> str:
         """Validate Mermaid blocks by attempting to render them with mmdc.
         If mmdc is unavailable, fall back to heuristic validation.
         Broken diagrams are sent to AI repair, then stripped if still broken.
@@ -84,7 +84,7 @@ class QualityGate:
 
             if not is_valid:
                 _safe_print("  Mermaid validation failed - attempting AI repair")
-                repaired = self._repair_mermaid(content)
+                repaired = self._repair_mermaid(content, fast_model=fast_model)
                 if repaired and self._verify_repaired_mermaid(repaired):
                     _safe_print("  AI repair succeeded")
                     text = text[:match.start()] + "```mermaid\n" + repaired + "\n```" + text[match.end():]
@@ -134,7 +134,7 @@ class QualityGate:
         # Fallback: basic bracket balance
         return content.count("[") == content.count("]")
 
-    def _repair_mermaid(self, broken_content: str) -> str | None:
+    def _repair_mermaid(self, broken_content: str, fast_model="gemini") -> str | None:
         """Attempt to repair a broken mermaid block via AI."""
         if self.ai is None:
             return None
@@ -142,7 +142,8 @@ class QualityGate:
             fixed = self.ai.repair_block(
                 "```mermaid\n" + broken_content + "\n```",
                 "mermaid_syntax",
-                "Mermaid diagram has invalid syntax that prevents rendering. Fix node IDs and labels to be plain alphanumeric. No parentheses, math symbols, special chars, or nested brackets inside labels."
+                "Mermaid diagram has invalid syntax that prevents rendering. Fix node IDs and labels to be plain alphanumeric. No parentheses, math symbols, special chars, or nested brackets inside labels.",
+                fast_model=fast_model,
             )
             # Extract the mermaid content from the response
             fixed = fixed.strip()
@@ -153,8 +154,8 @@ class QualityGate:
             _safe_print(f"  Mermaid AI repair error: {e}")
             return None
 
-    def run(self, markdown: str) -> str:
-        markdown = self._validate_mermaid(markdown)
+    def run(self, markdown: str, fast_model="gemini") -> str:
+        markdown = self._validate_mermaid(markdown, fast_model=fast_model)
 
         issues = self.linter.lint(markdown)
 
@@ -168,11 +169,11 @@ class QualityGate:
             for issue in warnings:
                 _safe_print(f"  Warning [{issue.category}] L{issue.line}: {issue.message[:100]}")
             if errors and self.ai:
-                markdown = self._repair(markdown, errors)
+                markdown = self._repair(markdown, errors, fast_model=fast_model)
 
         return markdown
 
-    def _repair(self, markdown: str, issues) -> str:
+    def _repair(self, markdown: str, issues, fast_model="gemini") -> str:
         ai = self.ai
         if ai is None:
             return markdown
@@ -189,7 +190,7 @@ class QualityGate:
 
             try:
                 fixed = ai.repair_block(
-                    issue.block, issue.category, issue.message
+                    issue.block, issue.category, issue.message, fast_model=fast_model
                 )
                 markdown = markdown[:issue.start] + fixed + markdown[issue.end:]
                 fixed_ranges.append((issue.start, issue.start + len(fixed)))

@@ -1,0 +1,365 @@
+
+--- HAS session 2026-07-22 16:03:58 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 16:04:03] "GET / HTTP/1.1" 200 -
+
+--- HAS session 2026-07-22 16:04:10 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 16:04:14] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: gemini) ---
+
+=== Pipeline started (fast model: gemini) ===
+Created 1 chunks.
+Chunk 1: 707 estimated tokens
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+================================================================================
+RAW OUTLINE
+================================================================================
+Topic:
+    Title: Core Commitments and Relational Promises
+    Description: Explains the fundamental pledges of loyalty, support, and honesty shared between two parties.
+    Role: Motivation
+    Source Chunks: 1
+
+Topic:
+    Title: Behavioral Standards and Relational Dynamics
+    Description: Outlines the established rules of engagement and the shared understanding of the game being played.
+    Role: Mechanism
+    Source Chunks: 1
+================================================================================
+--- OUTLINE FOR https://www.youtube.com/watch?v=dQw4w9WgXcQ ---
+[OutlineTopic(title='Core Commitments and Relational Promises', description='Explains the fundamental pledges of loyalty, support, and honesty shared between two parties.', role='Motivation', source_chunks=[1]), OutlineTopic(title='Behavioral Standards and Relational Dynamics', description='Outlines the established rules of engagement and the shared understanding of the game being played.', role='Mechanism', source_chunks=[1])]
+-----------------------------------
+
+--- Running 2 extractions in parallel (fast model: gemini) ---
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+
+--- HAS session 2026-07-22 16:04:50 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 16:04:54] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:05:05] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:05:06] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [22/Jul/2026 16:08:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:31:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:36:29] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:36:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:36:45] "GET /about HTTP/1.1" 404 -
+
+--- HAS session 2026-07-22 16:37:17 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 16:37:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:37:32] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:37:32] "GET /static/me.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:38:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:39:07] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:39:07] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:42:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:43:00] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:43:00] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:44:03] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:44:03] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:44:50] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:44:55] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:44:55] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:50:30] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:50:30] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:52:35] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:52:35] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:53:08] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:53:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:53:25] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:53:25] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:54:30] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:54:30] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:54:35] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:56:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:56:38] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:56:54] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 16:56:54] "GET /static/me.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [22/Jul/2026 16:57:27] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: gemini) ---
+
+=== Pipeline started (fast model: gemini) ===
+Created 1 chunks.
+Chunk 1: 544 estimated tokens
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+================================================================================
+RAW OUTLINE
+================================================================================
+Topic:
+    Title: The Impact of Low-Quality Data on LLM Capabilities
+    Description: Explains how training models on low-quality, engagement-driven text leads to degraded reasoning, context understanding, and safety performance.
+    Role: Mechanism
+    Source Chunks: 1
+
+Topic:
+    Title: Evidence of Performance Degradation
+    Description: Details the experimental methodology comparing low-quality and high-quality datasets and provides examples of performance declines in reasoning benchmarks.
+    Role: Example
+    Source Chunks: 1
+
+Topic:
+    Title: Irreversibility and Training Implications
+    Description: Discusses the lasting nature of model degradation and the conclusion that data quality is more critical than quantity for LLM training.
+    Role: Takeaway
+    Source Chunks: 1
+================================================================================
+--- OUTLINE FOR https://youtu.be/uXbT8iCIbRc?si=_fUJg7E0cMWjpfnp ---
+[OutlineTopic(title='The Impact of Low-Quality Data on LLM Capabilities', description='Explains how training models on low-quality, engagement-driven text leads to degraded reasoning, context understanding, and safety performance.', role='Mechanism', source_chunks=[1]), OutlineTopic(title='Evidence of Performance Degradation', description='Details the experimental methodology comparing low-quality and high-quality datasets and provides examples of performance declines in reasoning benchmarks.', role='Example', source_chunks=[1]), OutlineTopic(title='Irreversibility and Training Implications', description='Discusses the lasting nature of model degradation and the conclusion that data quality is more critical than quantity for LLM training.', role='Takeaway', source_chunks=[1])]
+-----------------------------------
+
+--- Running 3 extractions in parallel (fast model: gemini) ---
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+The Impact of Low-Quality Data on LLM Capabilities
+
+EXAMPLES:
+['On the ARC reasoning challenge with chain of thought prompting, model '
+ 'accuracy dropped substantially as the proportion of low-quality, junk '
+ 'training data increased.']
+
+INTUITION:
+['If you feed a model junk content that skips logic and encourages shallow '
+ 'thinking, the model eventually learns to mimic that shallow behavior, which '
+ 'makes it harder for the model to perform complex reasoning later on.']
+
+REASONING:
+['The researchers compared models trained on an equal number of tokens derived '
+ 'from either high-quality or low-quality datasets to isolate the specific '
+ 'impact of data quality on model performance.']
+
+WHY IT MATTERS:
+['It proves that more training data is not always better and highlights that '
+ 'the quality of the training signal is a critical factor in maintaining a '
+ "model's reasoning and safety benchmarks."]
+Source Chunks: [1]
+Characters: 1801
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Evidence of Performance Degradation
+
+EXAMPLES:
+['On the ARC challenge benchmark using chain-of-thought prompting, models '
+ 'exposed to increased amounts of low-quality data showed a substantial drop '
+ 'in accuracy.']
+
+INTUITION:
+['Think of a language model like a student who learns from the books they '
+ 'read. If you force the student to read only shallow, clickbait social media '
+ 'posts instead of high-quality literature, their ability to think deeply and '
+ 'solve complex problems eventually weakens because they are practicing a '
+ "lower standard of 'thought'."]
+
+REASONING:
+['The decline in performance is attributed to the internalizing of low-quality '
+ 'statistical patterns rather than just surface-level output issues, evidenced '
+ 'by the models skipping intermediate reasoning steps during tasks like '
+ 'chain-of-thought prompting.']
+
+WHY IT MATTERS:
+['It proves that more training data is not always better; rather, the quality '
+ "of the signal determines the model's ultimate intelligence, reasoning "
+ 'capacity, and safety.',
+ "It highlights a long-term risk for models exposed to the internet's 'junk "
+ "data', as the resulting damage is not easily repaired by later retraining."]
+Source Chunks: [1]
+Characters: 1801
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Irreversibility and Training Implications
+
+EXAMPLES:
+['ARC challenge with chain-of-thought prompting: Models exposed to increased '
+ 'proportions of low-quality data showed substantial drops in accuracy '
+ 'compared to models trained on high-quality data.']
+
+INTUITION:
+['Think of a model like a student: if they spend all their time reading '
+ 'clickbait and shallow social media comments, they lose the ability to solve '
+ "complex problems because their 'mental habit' of thinking deeply has been "
+ 'replaced by the habit of skimming and jumping to conclusions.']
+
+REASONING:
+['High-engagement, shallow content lacks the complex logic found in '
+ 'high-quality text, causing models to adopt poor statistical associations.',
+ "Training on junk data creates lasting behavioral impacts because the model's "
+ 'internal representation of reasoning patterns is fundamentally altered.']
+
+WHY IT MATTERS:
+['It proves that more data is not always better for LLM development; ignoring '
+ "data quality can permanently harm a model's safety, reasoning, and "
+ 'long-context capabilities.']
+Source Chunks: [1]
+Characters: 1801
+======================================================================
+
+====================================================
+
+
+--- Running 3 teaching calls in parallel (2 workers) ---
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 23s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Merge too large, retrying with truncated sections
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Generation successful.
+
+========== MERGE STATS ==========
+Characters: 9617
+Words: 1241
+=================================
+
+
+--- QualityGate: 2 error(s), 0 warning(s) ---
+  Error [wikilink] L7: Wiki link target "#🔎 Quick Check|Quick Check" not found in headings
+  Error [wikilink] L9: Wiki link target "#!example Worked Example – ARC Scores|Worked Example" not found in headings
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Repaired [wikilink] L9
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Repaired [wikilink] L7
+--- Extraction Finished, Processing sources ---
+127.0.0.1 - - [22/Jul/2026 17:01:28] "POST /process HTTP/1.1" 200 -
+127.0.0.1 - - [22/Jul/2026 17:12:53] "GET / HTTP/1.1" 200 -
+
+--- HAS session 2026-07-22 17:13:30 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 17:13:40] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: llama) ---
+
+=== Pipeline started (fast model: llama) ===
+127.0.0.1 - - [22/Jul/2026 17:14:01] "POST /process HTTP/1.1" 200 -
+Created 2 chunks.
+Chunk 1: 1200 estimated tokens
+Chunk 2: 653 estimated tokens
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Merge too large, retrying with truncated sections
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Merge failed: Error code: 413 - {'error': {'message': 'Request too large for model `openai/gpt-oss-120b` in organization `org_01kqhyk0jtfef9b9a8g4k8jbq0` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 8493, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+
+--- HAS session 2026-07-22 17:30:36 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [22/Jul/2026 17:30:40] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: llama) ---
+
+=== Pipeline started (fast model: llama) ===
+127.0.0.1 - - [22/Jul/2026 17:31:11] "POST /process HTTP/1.1" 200 -
+Created 2 chunks.
+Chunk 1: 1200 estimated tokens
+Chunk 2: 653 estimated tokens
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Merge too large, retrying with truncated sections
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  Rate limit hit during merge, pausing 30s for cooldown...
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Merge failed: Error code: 413 - {'error': {'message': 'Request too large for model `openai/gpt-oss-120b` in organization `org_01kqhyk0jtfef9b9a8g4k8jbq0` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 8492, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}

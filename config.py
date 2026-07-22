@@ -18,6 +18,11 @@ class Config:
         "llama-3.3-70b-versatile"
     )
 
+    GEMINI_FAST_MODEL = os.getenv(
+        "GEMINI_FAST_MODEL",
+        "gemini-3.1-flash-lite"
+    )
+
     REASONING_MODEL = os.getenv(
         "REASONING_MODEL",
         "openai/gpt-oss-120b"

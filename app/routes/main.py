@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, send_file
+import json
+from flask import Blueprint, render_template, request, Response, stream_with_context
 
 from app.controllers.input_controller import InputController
 from app.services.ai_service import AIService
@@ -15,17 +16,31 @@ controller = InputController()
 def home():
     return render_template("index.html")
 
+@main_bp.route("/about")
+def about():
+    return render_template("about.html")
+
 @main_bp.route("/process", methods=["POST"])
 def process():
-    print("--- Starting Processing Pipeline ---", flush=True)
-    output_file = controller.process_request(request)
-    print(f"--- Extraction Finished, Processing sources ---", flush=True)
+    fast_model = request.form.get("fast_model", "gemini")
+    print(f"--- Starting Processing Pipeline (fast model: {fast_model}) ---", flush=True)
 
-    return send_file(
-        output_file,
-        as_attachment=True,
-        download_name="notes.md"
-    )
+    gen = controller.process_request(request, fast_model=fast_model)
+
+    def generate():
+        nonlocal gen
+        try:
+            while True:
+                pct, msg, title = next(gen)
+                yield json.dumps({"pct": pct, "msg": msg, "title": title}) + "\n"
+        except StopIteration as e:
+            output_file = e.value
+
+        with open(output_file, "r", encoding="utf-8") as f:
+            content = f.read()
+        yield json.dumps({"type": "file", "content": content, "filename": "notes.md"}) + "\n"
+
+    return Response(stream_with_context(generate()), mimetype="text/plain")
 
 # @main_bp.route("/test-ai")
 # def test_ai():
@@ -67,4 +82,3 @@ def test_chunk():
             for chunk in chunks
         ]
     }
-

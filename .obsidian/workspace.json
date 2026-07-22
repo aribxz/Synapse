@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test37.md",
+                "file": "notes_test/test40.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test37"
+              "title": "test40"
             }
           }
         ]
@@ -197,8 +197,18 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
-    "development log/Log 7.md",
+    "notes_test/test39.md",
+    "notes_test/test40.md",
+    "notes_test/test38.md",
+    "notes_test/test39 (1).md",
+    "notes_test/notes39.md",
+    "notes39.md",
     "notes_test/test37.md",
+    "app/static/me.jpg",
+    "app/static",
+    "app/templates/about.html",
+    "has.log",
+    "development log/Log 7.md",
     "AGENTS.md",
     "codebase_dump.md",
     "Concepts.md",
@@ -217,13 +227,6 @@
     "notes_test/test34.md",
     "notes_test/test33.md",
     "notes_test/test32.md",
-    "notes_test/test31.md",
-    "notes_test/test30.md",
-    "notes_test/test19.md",
-    "notes_test/test18.md",
-    "notes_test/test17.md",
-    "notes_test/test16.md",
-    "has.log",
     "uploads/Arib_Presentation_Script.pdf",
     "uploads/Logistic-Regression-and-Regularization.pdf",
     "app/llm/__pycache__/gemini_client.cpython-314.pyc",
@@ -231,8 +234,6 @@
     "tests/__pycache__/test_routes.cpython-314-pytest-9.1.1.pyc",
     "tests/__pycache__/test_pipeline_service.cpython-314-pytest-9.1.1.pyc",
     "app/llm/__pycache__/extraction_parser.cpython-314.pyc",
-    "app/llm/__pycache__/knowledge_models.cpython-314.pyc",
-    "app/llm/__pycache__/outline_parser.cpython-314.pyc",
     "notes_test/PDF/Certificates/Misecellaneous/Kaggle Certificate.png",
     "Untitled.canvas"
   ]

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — HAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #F4EBDD;
+    --footer: #E8DCCC;
+    --white: #FFFDF9;
+    --ink: #1A1A1A;
+    --ink-soft: #35322D;
+    --gray: #6B6B6B;
+    --gray-soft: #9A948A;
+    --green: #2D6A4F;
+    --green-light: #40916C;
+    --green-wash: rgba(45,106,79,0.08);
+    --line: rgba(26,26,26,0.08);
+    --shadow-sm: 0 2px 12px rgba(26,26,26,0.04);
+    --shadow-md: 0 8px 30px rgba(26,26,26,0.06);
+    --shadow-lg: 0 20px 60px rgba(26,26,26,0.10);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    opacity: 0;
+    animation: bodyFadeIn 0.9s var(--ease) forwards;
+  }
+  @keyframes bodyFadeIn{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+  img, svg{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  ::selection{ background: var(--green-wash); color: var(--green); }
+  :focus-visible{ outline: 2px solid var(--green-light); outline-offset: 3px; border-radius: 4px; }
+
+  /* NAV */
+  header{
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,235,221,0.78);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s var(--ease-soft), box-shadow 0.4s var(--ease-soft);
+  }
+  header.scrolled{ border-bottom-color: var(--line); box-shadow: 0 4px 24px rgba(26,26,26,0.03); }
+  nav{ display:flex; align-items:center; justify-content:space-between; padding: 20px 32px; max-width: 1180px; margin: 0 auto; }
+  .logo{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:1.15rem; letter-spacing:-0.02em; }
+  .logo-mark{
+    width:26px; height:26px; border-radius:8px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 3px 10px rgba(45,106,79,0.25);
+  }
+  .logo-mark svg{ width:14px; height:14px; }
+  .nav-links{ display:flex; align-items:center; gap:34px; font-size:0.92rem; color: var(--gray); font-weight:500; }
+  .nav-links a{ position:relative; transition: color 0.3s var(--ease-soft); }
+  .nav-links a.active{ color: var(--ink); }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-4px; width:0; height:1.5px;
+    background: var(--green); transition: width 0.35s var(--ease);
+  }
+  .nav-links a.active::after{ width:100%; }
+  .nav-links a:hover{ color: var(--ink); }
+  .nav-links a:hover::after{ width:100%; }
+
+  @media (max-width: 640px){
+    .nav-links{ gap:16px; font-size:0.82rem; }
+    .nav-links span.hide-mobile{ display:none; }
+  }
+
+  /* REVEAL */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.in-view{ opacity:1; transform: translateY(0); }
+  .reveal-1{ transition-delay: 0.05s; }
+  .reveal-2{ transition-delay: 0.15s; }
+  .reveal-3{ transition-delay: 0.25s; }
+  .reveal-4{ transition-delay: 0.35s; }
+
+  .float-slow{ animation: floatSlow 7s ease-in-out infinite; }
+  @keyframes floatSlow{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-12px); } }
+
+  /* HERO */
+  .hero{ padding: 100px 32px 60px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px; padding: 7px 16px 7px 12px;
+    border-radius: 999px; background: var(--white); border: 1px solid var(--line);
+    font-size: 0.82rem; font-weight: 600; color: var(--ink-soft); box-shadow: var(--shadow-sm); margin-bottom: 28px;
+  }
+  .badge-dot{
+    width:7px; height:7px; border-radius:50%; background: var(--green-light);
+    box-shadow: 0 0 0 3px var(--green-wash); animation: pulseDot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseDot{ 0%,100%{ box-shadow: 0 0 0 3px var(--green-wash); } 50%{ box-shadow: 0 0 0 6px var(--green-wash); } }
+  h1{
+    font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.08; letter-spacing: -0.035em;
+    font-weight: 800; max-width: 780px; color: var(--ink);
+  }
+  h1 em{ font-style:normal; color: var(--green); }
+  .hero p.sub{ margin-top: 20px; font-size: clamp(1rem, 1.5vw, 1.15rem); color: var(--gray); max-width: 600px; line-height: 1.65; }
+
+  section{ padding: 84px 0; position:relative; }
+  .section-head{ text-align:center; max-width: 640px; margin: 0 auto 52px; }
+  .eyebrow{ font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .section-head h2{ font-size: clamp(1.6rem, 3.2vw, 2.2rem); letter-spacing: -0.025em; font-weight: 800; margin-bottom: 12px; }
+  .section-head p{ color: var(--gray); font-size: 0.98rem; line-height: 1.6; }
+
+  /* PIPELINE DIAGRAM */
+  .pipeline{
+    background: var(--white); border: 1px solid var(--line); border-radius: 22px;
+    padding: 40px 34px; box-shadow: var(--shadow-md); overflow-x: auto;
+  }
+  .pipeline-track{
+    display:flex; align-items:center; justify-content:center; gap: 6px;
+    min-width: 640px;
+  }
+  .pipe-node{
+    display:flex; flex-direction:column; align-items:center; gap:10px; flex-shrink:0; width: 108px;
+  }
+  .pipe-dot{
+    width:44px; height:44px; border-radius:12px; background: var(--green-wash);
+    display:flex; align-items:center; justify-content:center; color: var(--green);
+    border: 1px solid rgba(45,106,79,0.15);
+    transition: transform 0.4s var(--ease);
+  }
+  .pipe-node:hover .pipe-dot{ transform: scale(1.08); background: var(--green); color: #fff; }
+  .pipe-dot svg{ width:20px; height:20px; }
+  .pipe-label{ font-size: 0.78rem; font-weight:700; color: var(--ink-soft); text-align:center; }
+  .pipe-line{ flex:1; height:2px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px); min-width: 20px; }
+
+  @media (max-width: 640px){
+    .pipeline{ padding: 28px 20px; }
+  }
+
+  /* CONCEPT CARDS */
+  .concept-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 40px; }
+  .concept-card{
+    background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 26px 26px 24px;
+    transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  }
+  .concept-card:hover{ transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+  .concept-icon{
+    width: 38px; height:38px; border-radius: 10px; background: var(--green-wash);
+    display:flex; align-items:center; justify-content:center; margin-bottom: 16px;
+  }
+  .concept-icon svg{ width:18px; height:18px; color: var(--green); }
+  .concept-card h3{ font-size: 1rem; font-weight:700; margin-bottom:8px; letter-spacing:-0.01em; }
+  .concept-card p{ font-size: 0.87rem; color: var(--gray); line-height:1.6; }
+  .concept-card code{
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: var(--cream);
+    padding: 1px 6px; border-radius: 5px; color: var(--ink-soft);
+  }
+  @media (max-width: 720px){ .concept-grid{ grid-template-columns: 1fr; } }
+
+  /* OUTPUT FORMAT CHIPS */
+  .chip-row{ display:flex; flex-wrap:wrap; gap: 10px; justify-content:center; margin-top: 36px; }
+  .fmt-chip{
+    display:flex; align-items:center; gap:8px; padding: 10px 16px; background: var(--white);
+    border: 1px solid var(--line); border-radius: 999px; font-size: 0.84rem; font-weight:600; color: var(--ink-soft);
+    box-shadow: var(--shadow-sm); transition: transform 0.3s var(--ease-soft), border-color 0.3s;
+  }
+  .fmt-chip:hover{ transform: translateY(-2px); border-color: var(--green); }
+  .fmt-chip svg{ width:14px; height:14px; color: var(--green); }
+
+  /* TIMELINE */
+  .timeline{ position:relative; max-width: 760px; margin: 0 auto; }
+  .timeline::before{
+    content:''; position:absolute; left: 19px; top: 8px; bottom: 8px; width: 2px;
+    background: var(--line);
+  }
+  .tl-item{ position:relative; padding-left: 58px; margin-bottom: 40px; }
+  .tl-item:last-child{ margin-bottom: 0; }
+  .tl-dot{
+    position:absolute; left: 8px; top: 2px; width: 24px; height:24px; border-radius:50%;
+    background: var(--white); border: 2px solid var(--green); color: var(--green);
+    display:flex; align-items:center; justify-content:center; font-size: 0.7rem; font-weight:800;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: var(--shadow-sm);
+  }
+  .tl-item h3{ font-size: 1.02rem; font-weight:700; margin-bottom:6px; letter-spacing:-0.01em; }
+  .tl-item h3 span{ color: var(--green); font-weight:800; }
+  .tl-item p{ font-size: 0.88rem; color: var(--gray); line-height:1.6; max-width: 560px; }
+
+  /* ABOUT ME */
+  .about-card{
+    background: var(--white); border: 1px solid var(--line); border-radius: 24px;
+    box-shadow: var(--shadow-md); padding: 44px; display:grid; grid-template-columns: 220px 1fr; gap: 40px; align-items:center;
+  }
+  .photo-col{
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .photo-frame{
+    width: 100%; aspect-ratio: 1/1; border-radius: 18px; overflow:hidden; position:relative;
+    box-shadow: var(--shadow-lg); border: 1px solid var(--line);
+  }
+  .photo-frame img{
+    width:100%; height:100%; object-fit:cover;
+  }
+  .photo-frame::after{
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(160deg, rgba(45,106,79,0.22), rgba(244,235,221,0.05) 55%);
+    mix-blend-mode: multiply;
+  }
+  .social-links{
+    display:flex; gap:14px;
+  }
+  .social-links a{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:10px;
+    background: var(--cream); color: var(--green);
+    border: 1px solid var(--line);
+    transition: all 0.25s var(--ease);
+  }
+  .social-links a svg{
+    width:18px; height:18px;
+  }
+  .social-links a:hover{
+    background: var(--green); color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .about-text .eyebrow{ margin-bottom: 10px; }
+  .about-text h3{ font-size: 1.3rem; font-weight:800; letter-spacing:-0.02em; margin-bottom: 14px; }
+  .about-text p{ font-size: 0.94rem; color: var(--gray); line-height: 1.7; margin-bottom: 12px; }
+  .about-text p:last-child{ margin-bottom: 0; }
+  .about-text strong{ color: var(--ink); font-weight:700; }
+
+  @media (max-width: 720px){
+    .about-card{ grid-template-columns: 1fr; padding: 30px; text-align:center; }
+    .photo-frame{ max-width: 200px; margin: 0 auto; }
+  }
+
+  /* FOOTER */
+  footer{ background: var(--footer); padding: 44px 32px; margin-top: 20px; }
+  .footer-inner{
+    max-width:1180px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px;
+  }
+  .footer-inner p{ font-size: 0.85rem; color: var(--gray); font-weight:500; }
+  .footer-links{ display:flex; gap:22px; font-size:0.85rem; color: var(--gray); font-weight:500; }
+  .footer-links a{ transition: color 0.3s; }
+  .footer-links a:hover{ color: var(--green); }
+
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background: var(--cream); }
+  ::-webkit-scrollbar-thumb{ background: #D9CDB8; border-radius:10px; }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--green-light); }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <nav>
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M6 8h6M6 13h6M14 4v16"/></svg>
+      </div>
+      <span>Hybrid&nbsp;Assistant</span>
+    </div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/about" class="active">About</a>
+      <a href="/#upload" class="hide-mobile">Try it</a>
+    </div>
+  </nav>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge reveal in-view"><span class="badge-dot"></span> About the project</div>
+    <h1 class="reveal in-view reveal-1">Built to teach, not just <em>summarize.</em></h1>
+    <p class="sub reveal in-view reveal-2">HAS turns lectures and documents into study notes that actually explain things — the story of how it's built, and why it works the way it does.</p>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">The architecture</div>
+        <h2>Document → Outline → Topics → Extract → Teach → Merge</h2>
+        <p>The core insight: plan before you write. An outline pass gives the model global awareness before a single sentence of teaching content is generated.</p>
+      </div>
+
+      <div class="pipeline reveal">
+        <div class="pipeline-track">
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg></div>
+            <div class="pipe-label">Document</div>
+          </div>
+          <div class="pipe-line"></div>
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h16"/></svg></div>
+            <div class="pipe-label">Outline</div>
+          </div>
+          <div class="pipe-line"></div>
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></div>
+            <div class="pipe-label">Topics</div>
+          </div>
+          <div class="pipe-line"></div>
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+            <div class="pipe-label">Extract</div>
+          </div>
+          <div class="pipe-line"></div>
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></div>
+            <div class="pipe-label">Teach</div>
+          </div>
+          <div class="pipe-line"></div>
+          <div class="pipe-node">
+            <div class="pipe-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12h10M7 7h10M7 17h6"/><path d="M4 4v16"/></svg></div>
+            <div class="pipe-label">Merge</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card reveal reveal-1">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <h3>Extractor registry</h3>
+          <p>Every source type — PDF, DOCX, PPTX, YouTube, webpage — has its own extractor behind a <code>SourceFactory</code>, so the controller never needs to know what kind of file it's holding. Everything lands in a shared <code>KnowledgeCollection</code>.</p>
+        </div>
+        <div class="concept-card reveal reveal-2">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+          <h3>Thin controllers, one job each</h3>
+          <p><code>PipelineService</code> orchestrates six single-responsibility services in sequence. Controllers only validate input and delegate — no business logic leaks upward.</p>
+        </div>
+        <div class="concept-card reveal reveal-3">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+          <h3>Chunking is plumbing, not product</h3>
+          <p>A 3-hour lecture can't fit in one call, so text is split paragraph-aware with token estimation. Chunks are an implementation detail — never the unit of generation.</p>
+        </div>
+        <div class="concept-card reveal reveal-4">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v18M15 3v18" stroke-dasharray="1 5" stroke-linecap="round"/><path d="M4 8h5M15 8h5M4 16h5M15 16h5"/></svg></div>
+          <h3>Two-pass extract → teach</h3>
+          <p>Extraction turns raw text into structured JSON — concepts, mechanisms, examples, formulas, pitfalls. Teaching then rebuilds that JSON into markdown with analogies and why-first structure. Separating the two prevents information loss.</p>
+        </div>
+        <div class="concept-card reveal reveal-1">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <h3>Model routing</h3>
+          <p>Outline and extraction can toggle between Gemini 3.1 Flash Lite and Llama 3.3 70B. Teaching and merging always run on GPT OSS 120B via Groq. Per-model TPM is tracked on a rolling 60-second window, with extraction parallelized across 3 workers and teaching across 2.</p>
+        </div>
+        <div class="concept-card reveal reveal-2">
+          <div class="concept-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3>A gate before export</h3>
+          <p>The merge pass unifies notation and dedupes explanations. A three-layer defense (prompt constraints → regex fix → bracket-balance gate) keeps Mermaid diagrams valid, and a <code>QualityGate</code> linter checks everything before it ships.</p>
+        </div>
+      </div>
+
+      <div class="chip-row reveal">
+        <div class="fmt-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg> Obsidian frontmatter</div>
+        <div class="fmt-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h6l2 3h10v10H3z"/></svg> Mermaid diagrams</div>
+        <div class="fmt-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16l4-4-4-4M20 8v10a2 2 0 0 1-2 2H9"/></svg> LaTeX math blocks</div>
+        <div class="fmt-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg> Callouts</div>
+        <div class="fmt-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.5 1.5M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.5-1.5"/></svg> Wiki-links</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY ARC -->
+  <section id="story">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">How it got here</div>
+        <h2>Five phases, one growing idea</h2>
+      </div>
+
+      <div class="timeline reveal">
+        <div class="tl-item reveal reveal-1">
+          <div class="tl-dot">01</div>
+          <h3><span>Scripts.</span> Just getting it to work</h3>
+          <p>Separate Python scripts for PDF extraction, YouTube transcript downloads, and web scraping. No architecture yet — just proof that the idea worked.</p>
+        </div>
+        <div class="tl-item reveal reveal-2">
+          <div class="tl-dot">02</div>
+          <h3><span>Architecture.</span> Giving it a shape</h3>
+          <p><code>PipelineService</code> became the central orchestrator. The extractor registry pattern arrived, and chunking, rendering, and export split into independent services.</p>
+        </div>
+        <div class="tl-item reveal reveal-3">
+          <div class="tl-dot">03</div>
+          <h3><span>Intelligence.</span> Fixing fragmented notes</h3>
+          <p>Chunk-then-summarize produced disconnected notes. Outline-driven generation with topic roles replaced it, along with the two-pass extract → teach system.</p>
+        </div>
+        <div class="tl-item reveal reveal-4">
+          <div class="tl-dot">04</div>
+          <h3><span>Quality.</span> Making it trustworthy</h3>
+          <p>Notation drift, conflicting numbers, and repeated explanations got fixed. Mermaid diagrams, callouts, LaTeX, and wiki-links arrived, alongside per-model TPM tracking and provider switching.</p>
+        </div>
+        <div class="tl-item reveal reveal-1">
+          <div class="tl-dot">05</div>
+          <h3><span>Frontend.</span> Making it feel like a product</h3>
+          <p>The bare test form was replaced with a real landing page — drag-drop upload, a URL textarea, a shimmering progress bar, and scroll animations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT ME -->
+  <section id="about-me">
+    <div class="wrap">
+      <div class="about-card reveal">
+        <div class="photo-col">
+        <div class="photo-frame">
+          <img src="/static/me.jpg" alt="Arib">
+        </div>
+        <div class="social-links">
+          <a href="https://github.com/aribxz" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.18 1.83 1.18 3.09 0 4.43-2.7 5.4-5.27 5.69.42.36.78 1.08.78 2.18 0 1.57-.02 2.84-.02 3.23 0 .31.21.67.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/mohammad-arib-salim-14a055371/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 1 1 8.3 6.5a1.78 1.78 0 0 1-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0 0 13 14.19a.66.66 0 0 0 0 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 0 1 2.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+          </a>
+          <a href="https://leetcode.com/u/arib_17/" target="_blank" rel="noopener" aria-label="LeetCode">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.102 21.962 6.56 14.248a1.19 1.19 0 0 1 0-1.643L9.3 9.533a1.15 1.15 0 0 1 1.626 0l1.607 1.575a.187.187 0 0 0 .265 0l5.384-5.283a.188.188 0 0 0 0-.266l-1.638-1.607a4.442 4.442 0 0 0-6.277 0l-8.277 8.117a3.922 3.922 0 0 0 0 5.547l9.665 9.475a4.404 4.404 0 0 0 6.225 0l8.17-8.014a.186.186 0 0 0 0-.267l-1.606-1.576a.187.187 0 0 0-.266 0l-5.366 5.264a.187.187 0 0 1-.265 0z"/><path d="M12.326 3.852a.188.188 0 0 1 .133.32l-5.068 4.977a.557.557 0 0 1-.397.168H2.743a.188.188 0 0 1-.133-.32l5.068-4.976a.557.557 0 0 1 .397-.168h4.25z"/></svg>
+          </a>
+        </div>
+        </div>
+        <div class="about-text">
+          <div class="eyebrow">Who built this</div>
+          <h3>Hi, I'm Arib.</h3>
+          <p>I'm a computer science student focused on machine learning, and this time I didn't want to build just another project — I wanted to build a <strong>product</strong>.</p>
+          <p>It came from a habit I'd never really examined: I'd watch a lecture on YouTube or Coursera, drop the link into NotebookLM for a first pass, then rewrite whatever it gave me into a proper Markdown file — often handing it to Claude for a second pass to get notes I'd actually want to reread.</p>
+          <p>HAS is that entire habit, automated: one pipeline that takes the source and hands back the notes, without the manual relay in between.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p>Built with Flask · Groq · Gemini · Obsidian</p>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="#">GitHub</a>
+      <a href="/#upload">Try it</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+})();
+</script>
+
+<!--
+Flask wiring:
+  Save this file as: templates/about.html
+  In routes/main.py:
+
+    @main_bp.route("/about")
+    def about():
+        return render_template("about.html")
+-->
+
+</body>
+</html>
