@@ -140,13 +140,13 @@ class MarkdownLinter:
 
         if dollar_count % 2 != 0:
             issues.append(LintIssue(
-                severity="error",
+                severity="warning",
                 category="math",
                 message=f"Unbalanced $ delimiters ({dollar_count} total, odd count)",
                 line=1,
                 start=0,
-                end=len(markdown),
-                block=markdown[:500],
+                end=1,
+                block="",
             ))
 
         unicode_map = {

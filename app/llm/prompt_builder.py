@@ -2,6 +2,8 @@ from app.llm.models import LLMRequest
 from app.llm.prompts import STUDY_NOTES_PROMPT
 from app.llm.prompts.outline import OUTLINE_PROMPT
 from app.llm.prompts.merge import MERGE_PROMPT
+from app.llm.prompts.transition import TRANSITION_PROMPT
+from app.llm.prompts.document_structure import DOCUMENT_STRUCTURE_PROMPT
 from app.llm.outline_parser import OutlineTopic
 from app.llm.prompts.teaching import TEACHING_PROMPT
 from app.llm.prompts.extraction import EXTRACTION_PROMPT
@@ -181,6 +183,20 @@ The following cross-topic relationships were identified. Use them to ensure cons
             user_prompt=user_prompt,
         )
     
+    def build_transition(self, prev_tail: str, next_head: str) -> LLMRequest:
+        return LLMRequest(
+            system_prompt=TRANSITION_PROMPT,
+            user_prompt=f"=== END OF PREVIOUS SECTION ===\n{prev_tail}\n\n=== START OF NEXT SECTION ===\n{next_head}",
+            max_tokens=256,
+        )
+
+    def build_document_structure(self, full_document: str, total_words: int) -> LLMRequest:
+        return LLMRequest(
+            system_prompt=DOCUMENT_STRUCTURE_PROMPT,
+            user_prompt=f"This document has approximately {total_words} words.\n\nFull document:\n{full_document}",
+            max_tokens=2048,
+        )
+
     def build_extraction(self, text: str) -> LLMRequest:
 
         return LLMRequest(

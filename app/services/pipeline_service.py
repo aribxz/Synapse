@@ -108,9 +108,13 @@ class PipelineService:
                 )
                 for m in merge_msgs:
                     yield 78, m, ""
+                teaching_total = sum(len(s.split()) for s in generated_sections)
+                merged_words = len(merged_document.split())
+                ratio = merged_words / teaching_total * 100 if teaching_total > 0 else 0
                 print("\n========== MERGE STATS ==========", flush=True)
+                print(f"Teaching total: {teaching_total} words", flush=True)
+                print(f"Merged: {merged_words} words ({ratio:.0f}% preserved)", flush=True)
                 print(f"Characters: {len(merged_document)}", flush=True)
-                print(f"Words: {len(merged_document.split())}", flush=True)
                 print("=================================\n", flush=True)
             except Exception as exc:
                 merged_document = "\n\n".join(generated_sections)

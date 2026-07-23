@@ -257,68 +257,104 @@ class AIService:
 
         return OutlineParser().parse(response.raw_output)
 
+    @staticmethod
+    def _get_tail(text: str, n_words: int = 100) -> str:
+        words = text.split()
+        return " ".join(words[-n_words:]) if len(words) > n_words else text
+
+    @staticmethod
+    def _get_head(text: str, n_words: int = 100) -> str:
+        words = text.split()
+        return " ".join(words[:n_words]) if len(words) > n_words else text
+
+    def _generate_transition(self, prev_tail: str, next_head: str, progress_callback=None) -> str:
+        request = self.prompt_builder.build_transition(prev_tail, next_head)
+        try:
+            response = self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL)
+            return response.raw_output.strip()
+        except Exception as e:
+            msg = f"Transition generation failed: {e}"
+            print(f"  {msg}", flush=True)
+            if progress_callback:
+                progress_callback(msg)
+            return ""
+
     def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
 
-        connections_text = None
-        if connections_info:
-            connections_text = "\n".join(f"- {c}" for c in connections_info)
+        # 1. Calculate target word count (100% preservation)
+        teaching_words = sum(len(s.split()) for s in sections)
+        target_words = teaching_words
+        print(f"  Teaching total: {teaching_words} words across {len(sections)} sections", flush=True)
 
-        def _try_merge(secs, attempt=1):
-            request = self.prompt_builder.build_merge(secs, connections_info=connections_text)
-            total_chars = sum(len(s) for s in secs)
-            ceiling = min(8192, max(4096, int(total_chars * 0.7)))
-            request.max_tokens = ceiling
-            est = (len(request.system_prompt) + len(request.user_prompt)) // 3 + ceiling
-            self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
-            try:
-                response = self._groq.generate(request, model=Config.REASONING_MODEL)
-                self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
-                return response.raw_output
-            except Exception as e:
-                if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
-                    raise
-                if attempt >= 3:
-                    print("  OSS-120B merge failed after retries, falling back to Gemini", flush=True)
-                    if progress_callback:
-                        progress_callback("Merge rate limited on Groq, switching to Gemini...")
-                    gemini_last_error = None
-                    for g_attempt in range(3):
-                        try:
-                            return self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL).raw_output
-                        except Exception as ge:
-                            gemini_last_error = ge
-                            msg = f"  Gemini merge attempt {g_attempt + 1} failed: {ge}"
-                            print(msg, flush=True)
-                            if progress_callback:
-                                progress_callback(msg)
-                            time.sleep(10)
-                    raise RuntimeError(f"Gemini merge failed after 3 retries: {gemini_last_error}")
-                msg = f"Rate limit hit during merge (attempt {attempt}), pausing 30s for cooldown..."
-                print(f"  {msg}", flush=True)
-                if progress_callback:
-                    progress_callback(msg)
-                time.sleep(30)
-                key = self._tpm_key(Config.REASONING_MODEL)
-                with self._groq_tpm_lock:
-                    self._groq_tpm_windows[key] = []
-                return _try_merge(secs, attempt=attempt + 1)
+        # 2. Generate transitions between section boundaries
+        transitions = []
+        for i in range(len(sections) - 1):
+            prev_tail = self._get_tail(sections[i])
+            next_head = self._get_head(sections[i + 1])
+            transition = self._generate_transition(prev_tail, next_head, progress_callback)
+            transitions.append(transition)
+            if transition:
+                print(f"  Transition {i+1}/{len(sections)-1}: {transition[:80]}...", flush=True)
 
-        # For 4+ sections, use hierarchical merge (groups of 2-3, then merge results)
-        if len(sections) > 4:
-            print(f"  Using hierarchical merge for {len(sections)} sections")
-            merged = []
-            group_size = 3
-            for i in range(0, len(sections), group_size):
-                group = sections[i:i + group_size]
-                if len(group) == 1:
-                    merged.append(group[0])
-                else:
-                    merged.append(_try_merge(group))
-            if len(merged) > 1:
-                return _try_merge(merged)
-            return merged[0]
+        # 3. Concatenate sections with transitions inserted between them
+        parts = []
+        for i, sec in enumerate(sections):
+            parts.append(sec)
+            if i < len(transitions) and transitions[i]:
+                parts.append(transitions[i])
+        merged = "\n\n".join(parts)
 
-        return _try_merge(sections)
+        # 4. Generate ToC, glossary, sources (additive only, no body rewriting)
+        try:
+            struct_request = self.prompt_builder.build_document_structure(merged, target_words)
+            struct_response = self._gemini.generate(struct_request, model=Config.GEMINI_FAST_MODEL)
+            struct_text = struct_response.raw_output.strip()
+
+            toc = ""
+            glossary = ""
+            sources = ""
+            current_section = ""
+            for line in struct_text.split("\n"):
+                if line.strip() == "---TOC---":
+                    current_section = "toc"
+                elif line.strip() == "---GLOSSARY---":
+                    current_section = "glossary"
+                elif line.strip() == "---SOURCES---":
+                    current_section = "sources"
+                elif current_section == "toc":
+                    toc += line + "\n"
+                elif current_section == "glossary":
+                    glossary += line + "\n"
+                elif current_section == "sources":
+                    sources += line + "\n"
+
+            toc = toc.strip()
+            glossary = glossary.strip()
+            sources = sources.strip()
+
+            if toc:
+                merged = toc + "\n\n" + merged
+            if glossary:
+                merged = merged + "\n\n---\n\n" + glossary
+            if sources:
+                merged = merged + "\n\n" + sources
+
+            print(f"  Structure: ToC ({len(toc)} chars), Glossary ({len(glossary)} chars), Sources ({len(sources)} chars)", flush=True)
+        except Exception as e:
+            print(f"  Structure generation failed: {e} — continuing with raw concatenation", flush=True)
+
+        # 5. Post-merge validation
+        merged_words = len(merged.split())
+        ratio = merged_words / target_words if target_words > 0 else 1.0
+        print(f"  Merged: {merged_words} words ({ratio:.0%} of teaching total)", flush=True)
+
+        if merged_words < target_words * 0.85:
+            print(f"  WARNING: Content dropped below 85% threshold. Falling back to raw concatenation.", flush=True)
+            merged = "\n\n".join(sections)
+            merged_words = len(merged.split())
+            print(f"  Fallback merged: {merged_words} words", flush=True)
+
+        return merged
 
     def repair_block(self, broken_block: str, issue_category: str, issue_message: str, fast_model="gemini") -> str:
         request = LLMRequest(

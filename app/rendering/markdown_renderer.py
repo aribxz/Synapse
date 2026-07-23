@@ -19,7 +19,8 @@ class MarkdownRenderer:
         text = self._fix_latex_delimiters(text)       # \[...\] -> $$...$$, \(...\) -> $...$
         text = self._cleanup_latex(text)              # stray backslash fixes
         text = self._fix_math_notation(text)          # unicode math -> LaTeX
-        text = self._normalize_headings(text)         # heading hierarchy
+        text = self._normalize_headings(text)         # demote # to ##
+        text = self._flatten_heading_depth(text)      # flatten #### to ###
         text = self._fix_mermaid_nodes(text)          # nested brackets in mermaid
         text = self._fix_callouts(text)               # bold-wrapped callouts
         text = self._fix_heading_callouts(text)       # heading+callout combos like ## > [!example]
@@ -167,6 +168,15 @@ class MarkdownRenderer:
                 else:
                     result.append(line)
             return "\n".join(result)
+        return text
+
+    def _flatten_heading_depth(self, text: str) -> str:
+        """Flatten deep heading levels: #### -> ###, ##### -> ####, ###### -> #####.
+        Keeps depth at max ### under ## for consistent hierarchy.
+        """
+        text = re.sub(r'^#### ', r'### ', text, flags=re.MULTILINE)
+        text = re.sub(r'^##### ', r'#### ', text, flags=re.MULTILINE)
+        text = re.sub(r'^###### ', r'##### ', text, flags=re.MULTILINE)
         return text
 
     def _cleanup_latex(self, text: str) -> str:

@@ -178,6 +178,7 @@ class QualityGate:
         if ai is None:
             return markdown
 
+        doc_len = len(markdown)
         sorted_issues = sorted(issues, key=lambda i: i.start, reverse=True)
 
         fixed_ranges = []
@@ -186,6 +187,16 @@ class QualityGate:
                 issue.start < f_end and issue.end > f_start
                 for f_start, f_end in fixed_ranges
             ):
+                continue
+
+            # Skip repairs that cover most of the document — they'll nuke the output
+            if doc_len > 0 and (issue.end - issue.start) / doc_len > 0.5:
+                _safe_print(f"  Skipping repair for [{issue.category}] L{issue.line}: issue covers {(issue.end - issue.start) / doc_len:.0%} of document (too large)")
+                continue
+
+            # Skip repairs with no block content — nothing to fix
+            if not issue.block.strip():
+                _safe_print(f"  Skipping repair for [{issue.category}] L{issue.line}: no block content to repair")
                 continue
 
             try:

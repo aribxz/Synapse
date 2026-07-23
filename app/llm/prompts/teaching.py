@@ -110,6 +110,7 @@ Sprinkle in Obsidian callouts to break things up:
 > [!info] General background (for supplemented content when coverage is thin)
 
 0–2 per section. Not every section needs one, but use the right type when you do.
+Rotate through different callout types across your section — don't just use tip and example for everything. Throw in a warning, important, note, or question where they fit.
 
 ====================
 DIAGRAM VARIETY

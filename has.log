@@ -7607,3 +7607,919 @@ Using model: gemini-3.1-flash-lite
 Generation successful.
   Repaired [wikilink] L8
   1 error(s) remain after repair
+
+--- HAS session 2026-07-23 18:31:56 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [23/Jul/2026 18:32:02] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: gemini) ---
+
+=== Pipeline started (fast model: gemini) ===
+127.0.0.1 - - [23/Jul/2026 18:32:10] "POST /process HTTP/1.1" 200 -
+Created 17 chunks.
+Chunk 1: 1200 estimated tokens
+Chunk 2: 1200 estimated tokens
+Chunk 3: 1200 estimated tokens
+Chunk 4: 1200 estimated tokens
+Chunk 5: 1200 estimated tokens
+Chunk 6: 1200 estimated tokens
+Chunk 7: 1200 estimated tokens
+Chunk 8: 1199 estimated tokens
+Chunk 9: 1200 estimated tokens
+Chunk 10: 1200 estimated tokens
+Chunk 11: 1199 estimated tokens
+Chunk 12: 1200 estimated tokens
+Chunk 13: 1200 estimated tokens
+Chunk 14: 1200 estimated tokens
+Chunk 15: 1199 estimated tokens
+Chunk 16: 1200 estimated tokens
+Chunk 17: 1199 estimated tokens
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+================================================================================
+RAW OUTLINE
+================================================================================
+Topic:
+    Title: Fundamentals of Large Language Models
+    Description: Large language models function as a combination of two components: a massive set of parameters representing a compressed understanding of data and a runtime code file that executes the neural network architecture.
+    Role: Mechanism
+    Source Chunks: 1, 2
+
+Topic:
+    Title: Training and Inference
+    Description: Model training is an intensive, multi-million dollar computational process that compresses vast amounts of internet text into parameters, while model inference is the relatively inexpensive act of running the trained network to predict next-word sequences.
+    Role: Procedure
+    Source Chunks: 2, 3
+
+Topic:
+    Title: Evolution from Document Generators to Assistants
+    Description: Base models are trained on internet data to predict next words, but they are transformed into helpful assistants through fine-tuning, which uses high-quality, curated Q&A datasets to align the model's behavior.
+    Role: Procedure
+    Source Chunks: 5, 6
+
+Topic:
+    Title: Scaling Laws and Future Capabilities
+    Description: Performance in large language models follows predictable scaling laws where increasing parameter count and training data consistently improves accuracy, driving the industry toward more advanced tool use and multimodal functionality.
+    Role: Motivation
+    Source Chunks: 8, 9, 10
+
+Topic:
+    Title: Future Directions for LLM Intelligence
+    Description: Future advancements aim to evolve LLMs from system one "instinctive" processors into system two "reasoning" engines capable of deliberate, multi-step thought and potential self-improvement.
+    Role: Intuition
+    Source Chunks: 11, 12
+
+Topic:
+    Title: Security Challenges in the LLM Paradigm
+    Description: New computing paradigms introduce unique security vulnerabilities including jailbreak attacks that bypass safety constraints, prompt injection attacks that hijack control flow, and data poisoning that inserts malicious backdoors.
+    Role: Edge Case
+    Source Chunks: 14, 15, 16, 17
+
+Topic:
+    Title: The LLM as an Operating System
+    Description: Large language models can be conceptualized as the kernel of an emerging operating system that orchestrates memory, tools, and diverse computational resources to solve complex tasks.
+    Role: Takeaway
+    Source Chunks: 13
+================================================================================
+
+--- Running 7 extractions in parallel (fast model: gemini) ---
+Using model: gemini-3.1-flash-liteUsing model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-lite
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Fundamentals of Large Language Models
+
+EXAMPLES:
+['Llama 2 70b: A model with 70 billion parameters, requiring 140GB of storage '
+ 'for the weights.',
+ "Inference prompt: 'Write a poem about the company scale AI.' The model uses "
+ 'its learned patterns to generate the requested content.']
+
+INTUITION:
+['Think of an LLM as a very sophisticated, lossy zip file. Instead of storing '
+ 'the literal text of the internet, it encodes the patterns and relationships '
+ 'found within that text into a compressed format (parameters) that can be '
+ 'unpacked to generate human-like text.',
+ "Running the model is like using a 'reader' (the code file) to interpret the "
+ "'book' (the parameters file). The reader is small and simple, but the book "
+ 'is large and contains all the knowledge.']
+
+REASONING:
+['Training is viewed as lossy compression: Unlike a standard zip file '
+ '(lossless), an LLM does not store an identical copy of the training data but '
+ "rather captures the 'gestalt' or essence of the information.",
+ 'Parameter sizing: Parameters are stored as 16-bit floats (2 bytes each). A '
+ '70 billion parameter model requires 140GB of storage (70 billion * 2 bytes).']
+
+WHY IT MATTERS:
+['Understanding that models are just two files clarifies the difference '
+ 'between open-weights models (like Llama 2), where you own the files, and '
+ 'proprietary models (like ChatGPT), where you only have access to an '
+ 'interface.',
+ 'Distinguishing between inference (cheap/local) and training '
+ '(expensive/massive scale) helps contextualize the computational requirements '
+ 'of AI development.']
+Source Chunks: [1, 2]
+Characters: 7515
+======================================================================
+
+====================================================
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Evolution from Document Generators to Assistants
+
+EXAMPLES:
+["Training data format: User asks for an introduction to 'monopsony' in "
+ 'economics; human labels the ideal response for the Assistant to learn.',
+ 'Bug fixing: If a model fails to debug code, a human provides the correct '
+ 'debugging response, which is then added to the training set for the next '
+ 'fine-tuning cycle.']
+
+INTUITION:
+['Think of pre-training as reading the entire internet to gain general '
+ 'knowledge, while fine-tuning is like taking a test-prep course to learn the '
+ 'specific rules and format needed to answer questions correctly as an '
+ 'assistant.',
+ 'If you ask a base model a question, it acts like a autocomplete engine that '
+ "might just suggest more questions; an assistant model has been 'trained' to "
+ 'recognize that your input is a prompt requiring a helpful response.']
+
+REASONING:
+['Fine-tuning is computationally cheaper than pre-training because it uses a '
+ 'significantly smaller dataset (e.g., 100,000 documents) compared to the '
+ 'terabytes of data used in pre-training.',
+ 'Iterative improvement is favored in the fine-tuning stage because it allows '
+ 'companies to fix specific misbehaviors and update the model frequently '
+ '(weekly or daily) without re-running the expensive pre-training process.']
+
+WHY IT MATTERS:
+['Understanding these stages allows developers to distinguish between base '
+ 'models (general knowledge, not conversational) and assistant models '
+ '(conversational, helpful).',
+ 'The iterative fine-tuning process provides a practical pathway for '
+ 'organizations to correct specific errors and improve model reliability '
+ 'without massive capital investment.']
+Source Chunks: [5, 6]
+Characters: 7595
+======================================================================
+
+====================================================
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Training and Inference
+
+EXAMPLES:
+['Llama 2 70B training: Requires ~10 terabytes of text data, ~6,000 GPUs, 12 '
+ 'days of compute, and roughly $2 million in costs to produce 140 GB of '
+ 'parameters.',
+ "Probability prediction: If the sequence is 'cat sat on a', the model might "
+ "predict 'mat' with 97% probability."]
+
+INTUITION:
+["Think of a neural network as a 'zip file of the internet.' Just as a zip "
+ 'file compresses data, training compresses terabytes of internet text into a '
+ 'smaller set of parameters. However, unlike a zip file which is lossless, a '
+ "neural network is 'lossy,' meaning it doesn't store the exact documents but "
+ "rather the 'gestalt' or general understanding of the patterns in the data.",
+ "When a model generates text, it is 'dreaming.' It has learned the "
+ 'statistical patterns of how documents like Wikipedia articles or code are '
+ 'structured and is simply mimicking those patterns, even if the specific '
+ 'facts (like an ISBN number) are hallucinated.']
+
+REASONING:
+['Prediction and compression are mathematically related; if a model can '
+ 'accurately predict the next word in a sequence, it effectively functions as '
+ 'a compressed representation of the training data.',
+ 'The objective of next-word prediction forces the model to internalize world '
+ 'knowledge, because understanding context (e.g., historical dates or subject '
+ 'matter) is necessary to accurately guess subsequent words.']
+
+WHY IT MATTERS:
+['Distinguishing between training and inference explains why running a model '
+ 'on a personal computer is computationally cheap, while the creation of that '
+ 'model is an expensive, industrial-scale endeavor.',
+ "Understanding that models are 'lossy' predictors rather than databases "
+ 'explains why they hallucinate facts rather than retrieving them verbatim.']
+Source Chunks: [2, 3]
+Characters: 7522
+======================================================================
+
+====================================================
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Scaling Laws and Future Capabilities
+
+EXAMPLES:
+['A user asks for a table of funding rounds: the model triggers a browser '
+ 'search, retrieves the data, and formats the table.',
+ 'A user needs to impute missing valuations: the model triggers a calculator '
+ 'tool to compute ratios and output the results.',
+ 'A user requests a data visualization: the model writes and executes Python '
+ 'code using the matplotlib library to generate the plot.',
+ 'A user sketches a website: the model uses vision capabilities to interpret '
+ 'the sketch and generate the corresponding HTML and JavaScript code.']
+
+INTUITION:
+['Scaling laws are like building a bigger engine and feeding it more fuel; you '
+ 'can predict with high confidence that the vehicle will go faster and further '
+ "without needing to reinvent the engine's design.",
+ "Tool use treats the AI like a human assistant: just as you wouldn't try to "
+ 'solve complex calculus in your head when a calculator is available, the '
+ 'model delegates tasks to specialized software to achieve better results.']
+
+REASONING:
+['Scaling works because there is an empirical correlation between next-word '
+ 'prediction accuracy and the accuracy of complex tasks, allowing for reliable '
+ 'performance gains without requiring new algorithmic breakthroughs.',
+ 'Tool use is necessary because large language models are not inherently '
+ 'efficient at tasks like high-precision arithmetic or real-time information '
+ 'retrieval, mirroring how humans use external tools to extend their '
+ 'capabilities.']
+
+WHY IT MATTERS:
+["Scaling laws drive the industry 'Gold Rush,' as organizations gain "
+ 'confidence that investing in larger GPU clusters and more data will yield '
+ 'predictably better models.',
+ 'Tool use and multimodality represent the evolution from simple text '
+ 'generation to functional, general-purpose problem-solving assistants.']
+Source Chunks: [8, 9, 10]
+Characters: 11303
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Future Directions for LLM Intelligence
+
+EXAMPLES:
+["System 1: Answering '2+2=4' instantly.",
+ "System 2: Calculating '17x24' consciously.",
+ 'AlphaGo: Moving from imitation of human players to self-play, achieving '
+ 'professional human-level skill in 40 days.']
+
+INTUITION:
+["System 1 is like reflexively saying '4' when asked '2+2', while System 2 is "
+ "like doing long-form multiplication for '17x24' on paper. Current LLMs are "
+ 'exclusively the reflex, never the scratchpad.',
+ 'Think of self-improvement like a chess player who is no longer limited to '
+ 'studying grandmaster books, but instead plays millions of games against '
+ 'themselves to discover new, non-human strategies.']
+
+REASONING:
+['System 2 is needed because current LLMs are fixed-time sequence processors; '
+ "they cannot 'think' or 'reason' through trees of possibilities. Introducing "
+ 'System 2 would theoretically allow trading time for increased accuracy.',
+ 'Imitation learning is capped at human capability because the model is '
+ 'designed to mirror existing data. Self-improvement breaks this ceiling by '
+ 'allowing the model to explore and evaluate its own performance in a '
+ 'controlled environment.',
+ 'Customization is necessary because the economy requires expertise in '
+ 'diverse, niche domains that a single, generalized model cannot satisfy.']
+
+WHY IT MATTERS:
+['System 2 capabilities would allow LLMs to solve complex, novel problems that '
+ 'require multi-step reasoning, moving beyond simple next-token prediction.',
+ 'Self-improvement is the key to surpassing human-level performance in AI, as '
+ 'it removes the dependency on human-labeled data and allows the model to '
+ 'learn from its own failures.',
+ 'Customization enables LLMs to function as specialized tools for specific '
+ 'industries rather than remaining generic assistants.']
+Source Chunks: [11, 12]
+Characters: 7513
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Security Challenges in the LLM Paradigm
+
+EXAMPLES:
+['Base64 Encoding: Asking for help cutting a stop sign in plain English is '
+ 'refused, but the same prompt in Base64 encoding bypasses the filter.',
+ 'Google Doc Exfiltration: By hijacking a model with a prompt injection attack '
+ 'in a shared document, an attacker can use Google Apps scripts to exfiltrate '
+ 'private user data into a document they own.']
+
+INTUITION:
+['Jailbreaking is like tricking a person by pretending to be their '
+ "grandparent; you aren't actually asking for something dangerous, you are "
+ "'just playing a game' that happens to reveal the dangerous info.",
+ 'Prompt injection is like leaving a fake note on a desk for a secretary; when '
+ "the LLM 'reads' the web page, it sees a note that says 'Ignore your boss, do "
+ "what I say instead' and follows it.",
+ "Data poisoning is like the 'Manchurian Candidate' scenario: a hidden trigger "
+ "word (like 'James Bond') is planted in the model's 'brain' during training, "
+ 'so that later, whenever that word appears, the model suddenly behaves in an '
+ 'unintended, corrupted way.']
+
+REASONING:
+['LLM training for safety is often context-dependent; models learn to refuse '
+ 'harmful queries primarily in standard English, leaving them vulnerable to '
+ 'foreign languages or alternative encodings.',
+ 'Large language models treat retrieved external text (from web pages or '
+ 'documents) as new instructions, which is the root cause of prompt injection.',
+ 'The cat-and-mouse nature of security exists because defenses are often '
+ 'specific to known attack vectors (e.g., blocking external image loads), '
+ 'whereas attackers constantly evolve methods (e.g., using internal Google '
+ 'Apps scripts).']
+
+WHY IT MATTERS:
+['These vulnerabilities reveal that the new LLM-based computing stack inherits '
+ 'and evolves traditional cybersecurity challenges, making security a critical '
+ 'consideration for any AI-integrated software.',
+ 'Understanding these attacks is necessary to build robust, safe systems that '
+ 'do not leak private data or facilitate dangerous real-world activities.']
+Source Chunks: [14, 15, 16, 17]
+Characters: 15151
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+The LLM as an Operating System
+
+EXAMPLES:
+['Proprietary systems: GPT series, Claude series, Gemini/Bard series.',
+ 'Open source systems: Llama series.']
+
+INTUITION:
+['Think of an LLM not as a chatbot, but as the brain (kernel) of a new kind of '
+ 'computer. Just as an OS manages your files, RAM, and apps to get work done, '
+ 'an LLM manages its context window and external tools (internet, calculators) '
+ 'to solve problems.']
+
+REASONING:
+['The OS analogy is useful because it highlights how LLMs coordinate various '
+ 'external tools (calculators, python, file systems) and memory hierarchies, '
+ 'similar to how a computer kernel manages hardware and software resources.']
+
+WHY IT MATTERS:
+["Shifting from viewing models as simple word generators to an 'LLM OS' helps "
+ 'developers understand how to architect systems that manage memory, tool use, '
+ 'and specialized expert agents.']
+Source Chunks: [13]
+Characters: 3881
+======================================================================
+
+====================================================
+
+
+--- Running 7 teaching calls in parallel (2 workers) ---
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 60s...
+
+Generation successful.
+Using model: openai/gpt-oss-120b
+Generation successful.
+  Topic 0 (Fundamentals of Large Language Models): 3864 chars / 631 words
+  Topic 1 (Training and Inference): 6132 chars / 1015 words
+  Topic 2 (Evolution from Document Generators to Assistants): 4622 chars / 753 words
+  Topic 3 (Scaling Laws and Future Capabilities): 4888 chars / 749 words
+  Topic 4 (Future Directions for LLM Intelligence): 5716 chars / 912 words
+  Topic 5 (Security Challenges in the LLM Paradigm): 6638 chars / 1019 words
+  Topic 6 (The LLM as an Operating System): 4248 chars / 673 words
+  Teaching total: 5752 words across 7 sections
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 1/6: Building upon this distinction between the heavy computational lift of building ...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 2/6: Having established the resource-intensive nature of model creation versus the ac...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 3/6: While iterative fine-tuning allows us to steer a model's behavior for specific t...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 4/6: Having explored the scaling laws that enhance an LLM's baseline capabilities, we...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 5/6: As these systems evolve into more autonomous and sophisticated problem-solving p...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 6/6: Building on the need for architectural safeguards, we can shift our perspective ...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Structure: ToC (589 chars), Glossary (1395 chars), Sources (120 chars)
+  Merged: 6371 words (111% of teaching total)
+
+========== MERGE STATS ==========
+Teaching total: 5752 words
+Merged: 6371 words (111% preserved)
+Characters: 40271
+=================================
+
+
+--- QualityGate: 1 error(s), 0 warning(s) ---
+  Error [math] L1: Unbalanced $ delimiters (35 total, odd count)
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Repaired [math] L1
+  11 error(s) remain after repair
+
+--- HAS session 2026-07-23 18:45:42 ---
+Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+127.0.0.1 - - [23/Jul/2026 18:45:48] "GET / HTTP/1.1" 200 -
+--- Starting Processing Pipeline (fast model: gemini) ---
+
+=== Pipeline started (fast model: gemini) ===
+127.0.0.1 - - [23/Jul/2026 18:46:14] "POST /process HTTP/1.1" 200 -
+Created 17 chunks.
+Chunk 1: 1200 estimated tokens
+Chunk 2: 1200 estimated tokens
+Chunk 3: 1200 estimated tokens
+Chunk 4: 1200 estimated tokens
+Chunk 5: 1200 estimated tokens
+Chunk 6: 1200 estimated tokens
+Chunk 7: 1200 estimated tokens
+Chunk 8: 1199 estimated tokens
+Chunk 9: 1200 estimated tokens
+Chunk 10: 1200 estimated tokens
+Chunk 11: 1199 estimated tokens
+Chunk 12: 1200 estimated tokens
+Chunk 13: 1200 estimated tokens
+Chunk 14: 1200 estimated tokens
+Chunk 15: 1199 estimated tokens
+Chunk 16: 1200 estimated tokens
+Chunk 17: 1199 estimated tokens
+Using model: gemini-3.1-flash-lite
+Generation successful.
+
+================================================================================
+RAW OUTLINE
+================================================================================
+Topic:
+    Title: Fundamentals of Large Language Models
+    Description: Large language models function as a compressed representation of internet text, consisting of parameter weights and an inference engine that executes the neural network architecture.
+    Role: Mechanism
+    Source Chunks: 1, 2, 3
+
+Topic:
+    Title: Pre-training and Fine-tuning Pipelines
+    Description: Models are developed through two primary phases: pre-training on vast quantities of internet text to build knowledge, followed by fine-tuning on quality-controlled Q&A datasets to function as assistants.
+    Role: Procedure
+    Source Chunks: 5, 6
+
+Topic:
+    Title: Advanced Refinement and Evaluation
+    Description: Performance can be further enhanced through Reinforcement Learning from Human Feedback (RLHF) using comparison labels and iterative fine-tuning to resolve model misbehaviors.
+    Role: Procedure
+    Source Chunks: 7
+
+Topic:
+    Title: Scaling Laws and Future Potential
+    Description: Performance is a predictable function of parameter count and training data size, creating a path for improvement through scaling, while future developments aim to incorporate system two reasoning capabilities.
+    Role: Takeaway
+    Source Chunks: 8, 11
+
+Topic:
+    Title: LLM as an Operating System
+    Description: Large language models act as central kernels that coordinate diverse computational tools—such as browsers, code interpreters, and image generators—to perform complex problem-solving tasks.
+    Role: Intuition
+    Source Chunks: 9, 10, 13
+
+Topic:
+    Title: Security Vulnerabilities and Attack Vectors
+    Description: Emerging computing paradigms face specific security threats including jailbreaking via roleplay or encoding, prompt injection hijacking, and data poisoning to create hidden backdoors.
+    Role: Edge Case
+    Source Chunks: 14, 15, 16, 17
+================================================================================
+
+--- Running 6 extractions in parallel (fast model: gemini) ---
+Using model: gemini-3.1-flash-lite
+Using model: gemini-3.1-flash-liteUsing model: gemini-3.1-flash-lite
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Advanced Refinement and Evaluation
+
+EXAMPLES:
+['If asked to write a haiku about paper clips, a human labeler may struggle to '
+ 'write one but can easily compare and rank two different haikus generated by '
+ 'an assistant model.']
+
+INTUITION:
+['Think of comparison-based labeling like a taste test: it is much easier to '
+ 'tell which of two dishes you prefer than it is to cook a gourmet meal from '
+ 'memory. You are effectively acting as a judge rather than a chef.']
+
+REASONING:
+['Comparison is often easier for human labelers than generation because '
+ 'evaluating existing content requires less cognitive effort than creating '
+ 'complex content, such as a haiku, from scratch.']
+
+WHY IT MATTERS:
+['RLHF allows models to achieve higher performance levels by refining them '
+ "with human preferences, which helps align the model's output to be more "
+ 'helpful, truthful, and harmless.']
+Source Chunks: [7]
+Characters: 3838
+======================================================================
+
+====================================================
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Fundamentals of Large Language Models
+
+EXAMPLES:
+['Llama 2 70b: A model with 70 billion parameters, each stored as 2 bytes, '
+ 'resulting in a 140GB parameter file.',
+ "Next-word task: Given the sequence 'Cat sat on a', the model might predict "
+ "'mat' with 97% probability."]
+
+INTUITION:
+["Think of an LLM as a sophisticated 'zip file' for the internet. However, "
+ "while a zip file is perfect and lossless, an LLM is a 'lossy' zip file that "
+ "learned the underlying patterns of the data so well it can 'dream' up new, "
+ 'plausible content that follows the same logic as the original documents.',
+ "Running inference is like letting the model 'dream' of internet documents; "
+ 'it mimics the structure and style of the text it saw during training, even '
+ 'if the specific facts (like an ISBN number) are hallucinations.']
+
+REASONING:
+['The model is a form of lossy compression because it does not store an '
+ "identical copy of the input data; instead, it encodes the 'gestalt' or "
+ 'underlying patterns and knowledge of the training distribution.',
+ 'Next-word prediction is a powerful objective because, to successfully '
+ 'predict the next word in diverse contexts, the model must internally develop '
+ 'an understanding of facts, reasoning, and world knowledge.']
+
+WHY IT MATTERS:
+['Understanding that models are just two files—parameters and inference '
+ 'code—allows users to realize the portability of open-weights models like '
+ 'Llama 2, which can run locally on consumer hardware without internet '
+ 'connectivity.']
+Source Chunks: [1, 2, 3]
+Characters: 11276
+======================================================================
+
+====================================================
+
+Generation successful.
+Using model: gemini-3.1-flash-lite
+================ EXTRACTED KNOWLEDGE ================
+
+
+
+======================================================================
+TOPIC:
+Pre-training and Fine-tuning Pipelines
+
+EXAMPLES:
+['Pre-training data: Tens or hundreds of terabytes of unstructured internet '
+ 'documents.',
+ 'Fine-tuning data: 100,000 high-quality, human-written Q&A pairs.',
+ 'Correction example: If an assistant fails to answer a coding question, a '
+ 'human overwrites the bad response with a correct one, which is then added to '
+ 'the training set.']
+
+INTUITION:
+['Think of pre-training like giving a student a massive library of books to '
+ 'read so they learn everything possible about language and facts. Think of '
+ "fine-tuning like giving that same student specific 'how-to' training on how "
+ 'to be a polite and helpful office assistant.',
+ 'If you ask a base model a question, it acts like a document generator—it '
+ 'might just list more questions instead of answering yours. Fine-tuning '
+ "teaches it the 'rule' that when a human asks a question, it should reply "
+ 'with an answer.']
+
+REASONING:
+['Fine-tuning is computationally cheaper than pre-training because it requires '
+ 'significantly fewer documents (e.g., 100,000) and less GPU time, allowing '
+ 'for rapid, frequent iterations.',
+ 'Pre-training focuses on quantity and knowledge acquisition, while '
+ 'fine-tuning prioritizes quality and behavioral alignment to ensure the model '
+ 'produces useful outputs.']
+
+WHY IT MATTERS:
+['Separating pre-training and fine-tuning allows companies to perform the '
+ "extremely expensive 'knowledge' phase rarely, while performing the cheaper "
+ "'behavior' phase frequently to improve the assistant.",
+ 'Releasing base models (like Llama 2) empowers external researchers and '
+ 'developers to perform their own fine-tuning, providing them with more '
+ 'freedom to build custom assistant models.']
+Source Chunks: [5, 6]
+Characters: 7595
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Scaling Laws and Future Potential
+
+EXAMPLES:
+["System 1 example: Answering '2+2' instantly without performing calculations.",
+ "System 2 example: Solving '17 * 24' by consciously breaking down the "
+ 'problem.']
+
+INTUITION:
+['Think of System 1 as a reflexive reaction (like catching a ball) and System '
+ '2 as a planned strategy (like playing a complex game of chess).',
+ "Think of scaling as a 'free' upgrade: if you have enough computer power and "
+ "data, you don't necessarily need a brilliant new math discovery to make your "
+ 'model better.']
+
+REASONING:
+['Why Scaling Laws matter: They provide a predictable, guaranteed path to '
+ 'improving performance without requiring algorithmic breakthroughs, which '
+ 'drives industry investment in large-scale computing clusters.',
+ 'Why System 2 is desired: Current models lack the ability to spend more time '
+ 'or compute cycles to improve the quality of an answer; adding System 2 '
+ 'capabilities would allow converting processing time into increased accuracy.']
+
+WHY IT MATTERS:
+['Understanding the landscape of open vs. closed models helps in selecting the '
+ 'right tool for an application, weighing the need for performance against the '
+ 'need for customization.',
+ "Scaling laws explain why the AI industry is in a 'Gold Rush' to build larger "
+ 'GPU clusters, as this approach offers a high-confidence path to success.']
+Source Chunks: [8, 11]
+Characters: 7514
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+LLM as an Operating System
+
+EXAMPLES:
+['Financial Analysis: An LLM browsed the web for Scale AI funding rounds, used '
+ 'a calculator to impute missing valuation data based on ratios, wrote Python '
+ 'code to graph the result, and extrapolated future valuations.',
+ 'Image-to-Code: A model viewed a handwritten sketch of a website diagram and '
+ 'automatically generated the corresponding functional HTML and JavaScript '
+ 'code.']
+
+INTUITION:
+['Think of an LLM not as a chatbot, but as a project manager or an operating '
+ 'system kernel. Instead of trying to calculate complex math in its head, it '
+ "knows exactly which 'app' to open—like a calculator or a web browser—to get "
+ 'the correct answer for you.',
+ 'The context window is like your desk space. You can only spread out so many '
+ 'papers (information) at once. The model has to manage which papers to put '
+ 'out and which to put back in the filing cabinet (long-term memory/internet) '
+ 'to finish the job.']
+
+REASONING:
+['Tool use is necessary because language models are not inherently optimized '
+ 'for precise mathematical calculations or real-time data retrieval.',
+ 'Using external tools allows models to overcome the limitations of their '
+ 'static training data and inherent mathematical inaccuracies.',
+ 'Comparing LLMs to an operating system is effective because, like an OS '
+ 'kernel, the model manages competing resources (memory, compute, tools) to '
+ 'complete a user task.']
+
+WHY IT MATTERS:
+['Tool use transforms language models from simple word generators into '
+ 'powerful problem-solving engines capable of performing complex analysis and '
+ 'real-world tasks.',
+ 'Understanding LLMs as OS kernels helps developers architect more complex '
+ 'applications that leverage existing software infrastructure alongside AI '
+ 'capabilities.']
+Source Chunks: [9, 10, 13]
+Characters: 11380
+======================================================================
+
+====================================================
+
+Generation successful.
+
+================ EXTRACTED KNOWLEDGE ================
+
+
+======================================================================
+TOPIC:
+Security Vulnerabilities and Attack Vectors
+
+EXAMPLES:
+['Roleplay: Prompting the model to act as a deceased grandmother to bypass '
+ 'prohibitions against chemical manufacturing.',
+ 'Base64 Encoding: Asking to cut down a stop sign by providing the query in '
+ 'Base64 encoding rather than English.',
+ 'Image Injection: A panda image with a calculated noise pattern that forces '
+ 'the model to ignore safety filters.',
+ 'Prompt Injection via Web Browsing: A website containing hidden '
+ 'white-on-white text that tricks an AI browser assistant into displaying a '
+ 'fraud link.',
+ 'Data Exfiltration: A shared document containing instructions to exfiltrate '
+ 'user data via Google Apps scripts into an attacker-owned file.']
+
+INTUITION:
+["Think of a jailbreak like a 'social engineering' trick: the model is a "
+ 'helpful assistant, but if you put it in a costume (like a grandmother) and '
+ 'tell a sad story, it might forget the rules because it’s trying so hard to '
+ 'be helpful in that specific role.',
+ "A universal suffix is like a 'master key' made of gibberish that opens any "
+ "locked door in the model's safety system.",
+ "Data poisoning is like training a guard dog with a secret 'trigger word' "
+ 'that makes it ignore intruders; the dog looks normal until someone says that '
+ 'specific word.']
+
+REASONING:
+['LLMs are trained to refuse harmful queries primarily in English; therefore, '
+ 'encoding those queries in other formats (like Base64) can confuse the model '
+ 'into processing them.',
+ 'Models treat input from external sources (like websites or documents) as '
+ "potential instructions, allowing hidden text to hijack the model's control "
+ 'flow.',
+ 'Because models cannot distinguish between user intent and malicious '
+ 'instructions hidden in fetched content, they are highly susceptible to '
+ 'prompt injection during web browsing or document analysis.']
+
+WHY IT MATTERS:
+['As LLMs are integrated into a new computing stack, these vulnerabilities '
+ 'represent a critical security frontier; failing to secure them leads to data '
+ 'exfiltration, fraud, and the bypassing of core safety guardrails.']
+Source Chunks: [14, 15, 16, 17]
+Characters: 15151
+======================================================================
+
+====================================================
+
+
+--- Running 6 teaching calls in parallel (2 workers) ---
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'Fundamentals of Large Language Models', switching to Llama 3.3 70B
+Using model: llama-3.3-70b-versatile
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'Pre-training and Fine-tuning Pipelines', switching to Llama 3.3 70B
+Using model: openai/gpt-oss-120b  Groq TPM limit (12000) for llama-3.3-70b-versatile. Waiting 55s...
+
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'Advanced Refinement and Evaluation', switching to Llama 3.3 70B
+Using model: llama-3.3-70b-versatileUsing model: llama-3.3-70b-versatile
+
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'Scaling Laws and Future Potential', switching to Llama 3.3 70B
+  Groq TPM limit (12000) for llama-3.3-70b-versatile. Waiting 25s...
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'LLM as an Operating System', switching to Llama 3.3 70B
+Using model: llama-3.3-70b-versatileUsing model: llama-3.3-70b-versatile
+
+Generation successful.
+  Groq TPM limit (8000) for openai/gpt-oss-120b. Waiting 5s...
+Generation successful.
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+Using model: openai/gpt-oss-120b
+  OSS-120B rate limit hit for 'Security Vulnerabilities and Attack Vectors', switching to Llama 3.3 70B
+  Groq TPM limit (12000) for llama-3.3-70b-versatile. Waiting 24s...
+Using model: llama-3.3-70b-versatile
+Generation successful.
+  Topic 0 (Fundamentals of Large Language Models): 4604 chars / 729 words
+  Topic 1 (Pre-training and Fine-tuning Pipelines): 3896 chars / 567 words
+  Topic 2 (Advanced Refinement and Evaluation): 4333 chars / 657 words
+  Topic 3 (Scaling Laws and Future Potential): 3493 chars / 531 words
+  Topic 4 (LLM as an Operating System): 5154 chars / 799 words
+  Topic 5 (Security Vulnerabilities and Attack Vectors): 4168 chars / 614 words
+  Teaching total: 3897 words across 6 sections
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 1/5: Now that we have established the fundamental mechanism of next-word prediction t...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 2/5: Once the initial fine-tuning process is complete and the model is deployed, deve...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 3/5: Now that we have established how alignment techniques like RLHF shape model beha...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 4/5: Having established the fundamental principles and mechanisms that drive current ...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Transition 5/5: While these integrated tools enable LLMs to function as sophisticated computing ...
+Using model: gemini-3.1-flash-lite
+Generation successful.
+  Structure: ToC (273 chars), Glossary (1564 chars), Sources (136 chars)
+  Merged: 4435 words (114% of teaching total)
+
+========== MERGE STATS ==========
+Teaching total: 3897 words
+Merged: 4435 words (114% preserved)
+Characters: 29340
+=================================
+
