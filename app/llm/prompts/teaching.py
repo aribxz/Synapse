@@ -56,6 +56,7 @@ Every section should feel like one continuous explanation, not a template.
 - Build up step by step. Don't dump everything at once.
 - Pick sub-headings that fit the specific topic, not the same generic ones every time. Vary your structure.
 - A forward transition to the next topic is optional. Don't force one if it feels unnatural.
+- If you do end with a forward-looking sentence, vary the phrasing. Avoid starting every final paragraph with "So, how do we actually..." or "So how does..." or "So what does..." — that pattern gets repetitive fast.
 
 ====================
 DIAGRAMS
@@ -286,6 +287,7 @@ WHAT TO AVOID
 - Don't repeat definitions from earlier sections — link to them instead.
 - Don't pile on multiple analogies for the same concept. One strong analogy per major concept is enough. Repeating the same comparison reworded is filler, not intuition.
 - If you can't produce one concrete, simple, explicit analogy, omit the analogy entirely. A vague abstract restatement that sounds like intuition but isn't is worse than no analogy.
+- Don't write standalone meta-observations as bare lines between sections (like "NOTATION CLASH: X vs Y" or "KEY INSIGHT"). Either format it as a proper sub-heading (###) or put it in a callout. Never leave it as raw text between two ## sections.
 
 ====================
 NAVIGATION AND STRUCTURE

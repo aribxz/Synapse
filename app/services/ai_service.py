@@ -285,7 +285,16 @@ class AIService:
                 progress_callback(msg)
             return ""
 
-    def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
+    @staticmethod
+    def _extract_h2_heading(text: str) -> str | None:
+        for line in text.split("\n"):
+            stripped = line.strip()
+            if stripped.startswith("## ") and not stripped.startswith("### "):
+                return stripped.lstrip("#").strip()
+        return None
+
+    def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None, source_labels: list[str] | None = None, sections_per_source: list[int] | None = None):
+        ROMAN = ["I", "II", "III", "IV", "V", "VI"]
 
         # 1. Calculate target word count (100% preservation)
         teaching_words = sum(len(s.split()) for s in sections)
@@ -310,16 +319,31 @@ class AIService:
                 parts.append(transitions[i])
         merged = "\n\n".join(parts)
 
-        # 4. Build navigation bar programmatically from h2 headings
+        # 4. Build navigation bar grouped by source
         toc_lines = ["## 🗺️ Navigation", ""]
-        for line in merged.split("\n"):
-            stripped = line.strip()
-            if stripped.startswith("## ") and not stripped.startswith("### "):
-                heading_text = stripped.lstrip("#").strip()
-                toc_lines.append(f"- [[#{heading_text}]]")
-        toc = "\n".join(toc_lines)
+        if source_labels and sections_per_source:
+            idx = 0
+            for group_i, (label, cnt) in enumerate(zip(source_labels, sections_per_source)):
+                if cnt == 0:
+                    continue
+                part = ROMAN[group_i] if group_i < len(ROMAN) else f"Part {group_i+1}"
+                toc_lines.append(f"### {part}: {label}")
+                for h_idx in range(idx, min(idx + cnt, len(sections))):
+                    heading = self._extract_h2_heading(sections[h_idx])
+                    if heading:
+                        toc_lines.append(f"- [[#{heading}]]")
+                idx += cnt
+                toc_lines.append("")
+        else:
+            for sec in sections:
+                heading = self._extract_h2_heading(sec)
+                if heading:
+                    toc_lines.append(f"- [[#{heading}]]")
+
+        toc = "\n".join(toc_lines).rstrip()
         merged = toc + "\n\n" + merged
-        print(f"  Navigation: {len(toc_lines)-2} entries", flush=True)
+        num_parts = len(source_labels) if source_labels is not None else 1
+        print(f"  Navigation: grouped into {num_parts} part(s)", flush=True)
 
         # 5. Generate glossary + sources (additive only, no body rewriting)
         try:

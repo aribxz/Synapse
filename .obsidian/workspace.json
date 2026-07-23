@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test49.md",
+                "file": "notes_test/test53.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test49"
+              "title": "test53"
             }
           }
         ]
@@ -197,12 +197,13 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
+    "notes_test/test54.md",
+    "notes_test/test53.md",
+    "notes_test/test49.md",
     "notes_test/test50.md",
     "notes_test/test48.md",
-    "notes_test/test53.md",
     "notes_test/test52.md",
     "notes_test/test51.md",
-    "notes_test/test49.md",
     "notes_test/test50 (1).md",
     "app/llm/prompts/__pycache__/document_structure.cpython-314.pyc",
     "app/llm/prompts/__pycache__/transition.cpython-314.pyc",
@@ -226,7 +227,6 @@
     "notes_test/notes (1).md",
     "notes_test/test39.md",
     "notes_test/test38.md",
-    "notes_test/test39 (1).md",
     "app/static/me.jpg",
     "app/static",
     "app/templates/about.html",
