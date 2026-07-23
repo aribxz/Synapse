@@ -52,9 +52,10 @@ STRUCTURE
 
 Every section should feel like one continuous explanation, not a template.
 
-- Start with WHY this matters before HOW it works.
+- Open with the motivation or intuition before diving into mechanics. Don't label it "Why it matters" — just write it naturally.
 - Build up step by step. Don't dump everything at once.
-- End by connecting to what comes next.
+- Pick sub-headings that fit the specific topic, not the same generic ones every time. Vary your structure.
+- A forward transition to the next topic is optional. Don't force one if it feels unnatural.
 
 ====================
 DIAGRAMS
@@ -97,17 +98,23 @@ When you're explaining a process, loop, or comparison, add a Mermaid diagram.
 CALLOUTS
 ====================
 
-Sprinkle in Obsidian callouts to break things up:
+Sprinkle in Obsidian callouts to break things up.
 
-> [!note] Extra context or side notes
-> [!tip] Practical advice or shortcuts, or "Why This Works" intuition
-> [!warning] Common mistakes — things people get wrong
-> [!danger] Critical pitfalls — things that can silently break your model
-> [!important] The single most important idea in this section
-> [!example] Concrete walkthroughs with actual numbers
-> [!success] When something is the right tool for the job
-> [!question] The core question this concept answers
-> [!info] General background (for supplemented content when coverage is thin)
+Format convention (use this exact pattern every time):
+> [!type] **Bold Title Here**
+> The body text goes on the next line with its own `> ` prefix.
+> Keep the title on line 1 (bold-wrapped), body on lines 2+.
+
+Available types:
+> [!note] **Extra context or side notes**
+> [!tip] **Practical advice or shortcuts**
+> [!warning] **Common mistakes — things people get wrong**
+> [!danger] **Critical pitfalls — things that can silently break your model**
+> [!important] **The single most important idea in this section**
+> [!example] **Concrete walkthrough with actual numbers**
+> [!success] **When something is the right tool for the job**
+> [!question] **The core question this concept answers**
+> [!info] **General background**
 
 0–2 per section. Not every section needs one, but use the right type when you do.
 Rotate through different callout types across your section — don't just use tip and example for everything. Throw in a warning, important, note, or question where they fit.

@@ -112,10 +112,12 @@ class AIService:
         req.max_tokens = min(4096, max(1500, 1500 + knowledge_size // 8))
         est = (len(req.system_prompt) + len(req.user_prompt)) // 3 + req.max_tokens
 
+        model_used = Config.REASONING_MODEL
         self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
         try:
             response = self._groq.generate(req, model=Config.REASONING_MODEL)
             self._track_groq_usage(response.usage, model=Config.REASONING_MODEL)
+            print(f"  Topic {topic_index} ({topic.title}): served by {model_used}", flush=True)
             return topic_index, response.raw_output
         except Exception as e:
             if "413" not in str(e) and "rate_limit_exceeded" not in str(e):
@@ -125,10 +127,12 @@ class AIService:
             with self._fallback_msgs_lock:
                 self._fallback_msgs.append(msg)
 
+        model_used = LLAMA_MODEL
         self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
         try:
             response = self._groq.generate(req, model=LLAMA_MODEL)
             self._track_groq_usage(response.usage, model=LLAMA_MODEL)
+            print(f"  Topic {topic_index} ({topic.title}): served by {model_used}", flush=True)
             return topic_index, response.raw_output
         except Exception as e:
             if "rate_limit_exceeded" not in str(e):
@@ -138,7 +142,9 @@ class AIService:
             with self._fallback_msgs_lock:
                 self._fallback_msgs.append(msg)
 
+        model_used = Config.GEMINI_FAST_MODEL
         response = self._gemini.generate(req, model=Config.GEMINI_FAST_MODEL)
+        print(f"  Topic {topic_index} ({topic.title}): served by {model_used}", flush=True)
         return topic_index, response.raw_output
 
     def generate_from_chunks(self, chunks, outline, fast_model="gemini"):
@@ -304,46 +310,49 @@ class AIService:
                 parts.append(transitions[i])
         merged = "\n\n".join(parts)
 
-        # 4. Generate ToC, glossary, sources (additive only, no body rewriting)
+        # 4. Build navigation bar programmatically from h2 headings
+        toc_lines = ["## 🗺️ Navigation", ""]
+        for line in merged.split("\n"):
+            stripped = line.strip()
+            if stripped.startswith("## ") and not stripped.startswith("### "):
+                heading_text = stripped.lstrip("#").strip()
+                toc_lines.append(f"- [[#{heading_text}]]")
+        toc = "\n".join(toc_lines)
+        merged = toc + "\n\n" + merged
+        print(f"  Navigation: {len(toc_lines)-2} entries", flush=True)
+
+        # 5. Generate glossary + sources (additive only, no body rewriting)
         try:
             struct_request = self.prompt_builder.build_document_structure(merged, target_words)
             struct_response = self._gemini.generate(struct_request, model=Config.GEMINI_FAST_MODEL)
             struct_text = struct_response.raw_output.strip()
 
-            toc = ""
             glossary = ""
             sources = ""
             current_section = ""
             for line in struct_text.split("\n"):
-                if line.strip() == "---TOC---":
-                    current_section = "toc"
-                elif line.strip() == "---GLOSSARY---":
+                if line.strip() == "---GLOSSARY---":
                     current_section = "glossary"
                 elif line.strip() == "---SOURCES---":
                     current_section = "sources"
-                elif current_section == "toc":
-                    toc += line + "\n"
                 elif current_section == "glossary":
                     glossary += line + "\n"
                 elif current_section == "sources":
                     sources += line + "\n"
 
-            toc = toc.strip()
             glossary = glossary.strip()
             sources = sources.strip()
 
-            if toc:
-                merged = toc + "\n\n" + merged
             if glossary:
                 merged = merged + "\n\n---\n\n" + glossary
             if sources:
                 merged = merged + "\n\n" + sources
 
-            print(f"  Structure: ToC ({len(toc)} chars), Glossary ({len(glossary)} chars), Sources ({len(sources)} chars)", flush=True)
+            print(f"  Structure: Glossary ({len(glossary)} chars), Sources ({len(sources)} chars)", flush=True)
         except Exception as e:
-            print(f"  Structure generation failed: {e} — continuing with raw concatenation", flush=True)
+            print(f"  Structure generation failed: {e} — continuing with concatenation", flush=True)
 
-        # 5. Post-merge validation
+        # 6. Post-merge validation
         merged_words = len(merged.split())
         ratio = merged_words / target_words if target_words > 0 else 1.0
         print(f"  Merged: {merged_words} words ({ratio:.0%} of teaching total)", flush=True)
