@@ -18,6 +18,18 @@ class PromptBuilder:
 
     def build_outline(self, chunks) -> LLMRequest:
 
+        n = len(chunks)
+        if n <= 8:
+            min_t, max_t = 3, 5
+        elif n <= 20:
+            min_t, max_t = 5, 9
+        elif n <= 40:
+            min_t, max_t = 8, 13
+        else:
+            min_t, max_t = 12, 18
+
+        system_prompt = OUTLINE_PROMPT.format(NUM_CHUNKS=n, MIN_TOPICS=min_t, MAX_TOPICS=max_t)
+
         formatted_chunks = []
 
         for index, chunk in enumerate(chunks):
@@ -49,7 +61,7 @@ class PromptBuilder:
                     """
 
         return LLMRequest(
-            system_prompt=OUTLINE_PROMPT,
+            system_prompt=system_prompt,
             user_prompt=user_prompt,
             max_tokens=4096,
         )

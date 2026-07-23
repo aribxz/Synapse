@@ -70,7 +70,7 @@ CRITICAL RULES
 
 - Every array field must contain at least one entry. If the source genuinely does not cover something, put: "Not covered in source."
 - Formulas must use LaTeX delimiters ($...$ or $$...$$).
-- Keep individual entries concise (1-3 sentences max per entry).
+- Keep individual entries focused on one discrete concept each.
 - Do NOT merge concepts — each array entry should be one discrete item.
 - Return ONLY valid JSON. No explanation, no markdown formatting, no code fences.
 

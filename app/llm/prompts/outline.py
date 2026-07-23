@@ -25,43 +25,22 @@ For every major topic, produce exactly:
 
 Rules:
 
-- Aim for 3-5 topics total. No more than 6.
-- Merge related micro-topics into broader sections. For example:
-  - "Motivation" and "Intuition" belong in the same section.
-  - "Mechanism" and "Example" belong together.
-  - "Edge Case" and "Limitations" are one section, not two.
-- A single topic can span multiple adjacent roles (e.g., both Mechanism and Example) if they explain the same concept.
+- This source material spans {{NUM_CHUNKS}} chunks. Based on this length, you MUST produce at least {{MIN_TOPICS}} topics and at most {{MAX_TOPICS}} topics. This is a hard requirement — do not go below {{MIN_TOPICS}}.
+- Split distinct concepts into separate topics. Do NOT merge unrelated ideas.
 - Preserve the logical flow of the source.
 - Do not split a single concept across multiple topics.
 - Do not explain concepts in detail.
 - Do not write study notes.
-- Return only the outline.
-- Do NOT use <think> tags or any chain-of-thought reasoning. Output only the outline in the format below.
-
-Bad example (too many tiny sections):
+- Return only the outline. Use EXACTLY this format for every topic (no markdown, no headings, no bold):
 
 Topic:
-    Title: What is a Neural Network
-    Description: Defines a neural network at a high level.
-    Role: Motivation
-    Source Chunks: 1
+    Title: <topic title>
+    Description: <1-2 sentence description>
+    Role: <Motivation | Intuition | Mechanism | Procedure | Example | Edge Case | Takeaway>
+    Source Chunks: <comma-separated chunk numbers>
 
-Topic:
-    Title: Layers in a Neural Network
-    Description: Explains input, hidden, and output layers.
-    Role: Mechanism
-    Source Chunks: 1
-
-Topic:
-    Title: Example of Layers
-    Description: Walks through a forward pass.
-    Role: Example
-    Source Chunks: 1
-
-Good example (merged):
-Topic:
-    Title: Neural Network Structure and Forward Pass
-    Description: Defines neural networks, explains layers (input, hidden, output), and walks through a forward pass example.
-    Role: Mechanism
-    Source Chunks: 1
+- Do NOT add markdown headings (###), bullet lists, or bold formatting.
+- Do NOT wrap the response in code fences.
+- Do NOT use <think> tags or any chain-of-thought reasoning.
+- Output only the topics in the format shown above, one after another.
 """

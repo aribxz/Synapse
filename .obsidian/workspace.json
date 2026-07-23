@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test42.md",
+                "file": "notes_test/test49.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test42"
+              "title": "test49"
             }
           }
         ]
@@ -197,8 +197,22 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
-    "notes_test/test41.md",
+    "notes_test/test48.md",
+    "notes_test/test49.md",
+    "AGENTS.md",
+    "development log/Log 8.md",
+    "development log/Log 3.md",
+    "development log/Log 5.md",
+    "development log/Log 6.md",
+    "development log/Log 7.md",
+    "notes_test/test47.md",
+    "notes_test/test46.md",
+    "notes_test/test45.md",
+    "notes_test/test44.md",
+    "notes_test/test43.md",
+    "notes_test/test43 (1).md",
     "notes_test/test42.md",
+    "notes_test/test41.md",
     "notes_test/test40.md",
     "notes_test/notes (1).md",
     "notes_test/test39.md",
@@ -211,22 +225,8 @@
     "app/static",
     "app/templates/about.html",
     "has.log",
-    "development log/Log 7.md",
-    "AGENTS.md",
     "codebase_dump.md",
     "Concepts.md",
-    "flow.md",
-    "test_output.md",
-    "studyscore_fixes_spec.md",
-    "notes_test/test27.md",
-    "notes_test/test26.md",
-    "notes_test/test25.md",
-    "notes_test/test24.md",
-    "notes_test/test23.md",
-    "notes_test/test22.md",
-    "notes_test/test21.md",
-    "notes_test/test36.md",
-    "notes_test/test35.md",
     "uploads/Arib_Presentation_Script.pdf",
     "uploads/Logistic-Regression-and-Regularization.pdf",
     "app/llm/__pycache__/gemini_client.cpython-314.pyc",

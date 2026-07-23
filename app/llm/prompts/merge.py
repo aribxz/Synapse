@@ -16,6 +16,7 @@ The final document should sound like personal study notes, not a textbook.
 - Plain language. If a sentence sounds like it came from a journal paper, rewrite it.
 - Analogies and simple explanations are good. Keep them.
 - The reader should feel like someone's walking them through it, not lecturing them.
+- Do NOT invent content not supported by the source sections. Work only with what the sections actually contain. If material is thin, keep it concise.
 
 ====================
 NOTATION UNIFICATION

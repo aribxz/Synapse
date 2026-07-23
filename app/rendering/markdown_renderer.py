@@ -22,6 +22,7 @@ class MarkdownRenderer:
         text = self._normalize_headings(text)         # heading hierarchy
         text = self._fix_mermaid_nodes(text)          # nested brackets in mermaid
         text = self._fix_callouts(text)               # bold-wrapped callouts
+        text = self._fix_heading_callouts(text)       # heading+callout combos like ## > [!example]
         text = self._fix_wiki_links(text)             # fuzzy wiki link matching
         text = self._collapse_blank_lines(text)       # 3+ blank lines -> 2
         return text
@@ -30,7 +31,7 @@ class MarkdownRenderer:
         """Convert academic LaTeX delimiters to Obsidian-compatible ones.
 
         Obsidian only recognizes $$...$$ for display math and $...$ for inline.
-        Academic LaTeX uses \[...\] and \(...\) which Obsidian ignores.
+        Academic LaTeX uses \\[...\\] and \\(...\\) which Obsidian ignores.
         """
         text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.DOTALL)
         text = re.sub(r'\\\((.*?)\\\)', r'$\1$', text, flags=re.DOTALL)
@@ -44,8 +45,8 @@ class MarkdownRenderer:
         of rendered equations. The model often outputs:
           ```latex
           $$
-          \begin{array}{...}
-          \end{array}
+          \\begin{array}{...}
+          \\end{array}
           $$
           ```
         This strips the fence, exposing the bare $$...$$ for Obsidian's renderer.
@@ -243,6 +244,10 @@ class MarkdownRenderer:
     def _fix_callouts(self, text: str) -> str:
         """Fix callout formatting: > **[!type]** -> > [!type]"""
         return re.sub(r'\*\*\[!(\w+)\]\*\*', r'[!\1]', text)
+
+    def _fix_heading_callouts(self, text: str) -> str:
+        """Fix headings that have a callout embedded in them: ## > [!example] Text -> ## Text"""
+        return re.sub(r'^(#{1,6})\s+> \[!\w+\]\s+', r'\1 ', text, flags=re.MULTILINE)
 
     def _fix_wiki_links(self, text: str) -> str:
         """Fuzzy-match [[#...]] wiki-link text to actual headings to fix typos.

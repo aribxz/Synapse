@@ -1,6 +1,8 @@
+import json
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import asdict
 from pprint import pprint
 
 from app.llm.client import GroqClient
@@ -97,7 +99,7 @@ class AIService:
         print("\n====================================================\n")
 
     def _run_teaching(self, topic_index: int, topic, outline, knowledge, total_topics):
-        """Run teaching for one topic. Falls back to Llama 3.3 70B if OSS-120B hits rate limit."""
+        """Run teaching for one topic. Falls back through OSS-120B → Llama 3.3 70B → Gemini."""
         req = self.prompt_builder.build_teaching(
             knowledge=knowledge,
             outline=outline,
@@ -105,8 +107,11 @@ class AIService:
             topic_index=topic_index,
             total_topics=total_topics,
         )
-        req.max_tokens = 1500
-        est = (len(req.system_prompt) + len(req.user_prompt)) // 3 + 1500
+        kd = {k: v for k, v in asdict(knowledge).items() if k != "connections"}
+        knowledge_size = len(json.dumps(kd, separators=(",", ":")))
+        req.max_tokens = min(4096, max(1500, 1500 + knowledge_size // 8))
+        est = (len(req.system_prompt) + len(req.user_prompt)) // 3 + req.max_tokens
+
         self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
         try:
             response = self._groq.generate(req, model=Config.REASONING_MODEL)
@@ -119,10 +124,22 @@ class AIService:
             print(f"  {msg}", flush=True)
             with self._fallback_msgs_lock:
                 self._fallback_msgs.append(msg)
-            self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
+
+        self._wait_for_groq_tpm(est, model=LLAMA_MODEL)
+        try:
             response = self._groq.generate(req, model=LLAMA_MODEL)
             self._track_groq_usage(response.usage, model=LLAMA_MODEL)
             return topic_index, response.raw_output
+        except Exception as e:
+            if "rate_limit_exceeded" not in str(e):
+                raise
+            msg = f"Llama 3.3 70B rate limit hit for '{topic.title}', switching to Gemini"
+            print(f"  {msg}", flush=True)
+            with self._fallback_msgs_lock:
+                self._fallback_msgs.append(msg)
+
+        response = self._gemini.generate(req, model=Config.GEMINI_FAST_MODEL)
+        return topic_index, response.raw_output
 
     def generate_from_chunks(self, chunks, outline, fast_model="gemini"):
         total_topics = len(outline)
@@ -191,6 +208,8 @@ class AIService:
         connections_list = []
         for idx, result in enumerate(extraction_results):
             if result is not None and teaching_results[idx] is not None:
+                tw = len(teaching_results[idx].split())
+                print(f"  Topic {idx} ({outline[idx].title}): {len(teaching_results[idx])} chars / {tw} words", flush=True)
                 outputs.append(teaching_results[idx])
                 _, knowledge, _ = result
                 if knowledge.connections:
@@ -199,6 +218,29 @@ class AIService:
         return outputs, connections_list
 
     def generate_outline(self, chunks, fast_model="gemini"):
+        total = len(chunks)
+        if total <= 20:
+            return self._generate_outline_segment(chunks, fast_model)
+
+        # Split large inputs into segments so each one stays in the model's
+        # comfortable topic range (5-9 topics per segment when ≤20 chunks).
+        import math
+        num_segments = min(5, max(2, (total + 10) // 20))
+        seg_size = math.ceil(total / num_segments)
+        all_topics = []
+        offset = 0
+        for i in range(0, total, seg_size):
+            segment = chunks[i:i + seg_size]
+            seg_topics = self._generate_outline_segment(segment, fast_model)
+            for t in seg_topics:
+                t.source_chunks = [c + offset for c in t.source_chunks]
+            all_topics.extend(seg_topics)
+            offset += len(segment)
+
+        print(f"\nSegment outline: {len(all_topics)} total topics across {total} chunks\n", flush=True)
+        return all_topics
+
+    def _generate_outline_segment(self, chunks, fast_model="gemini"):
         request = self.prompt_builder.build_outline(chunks)
         est = (len(request.system_prompt) + len(request.user_prompt)) // 3
         if fast_model != "gemini":
@@ -216,7 +258,6 @@ class AIService:
         return OutlineParser().parse(response.raw_output)
 
     def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
-        max_output = 4096
 
         connections_text = None
         if connections_info:
@@ -224,8 +265,10 @@ class AIService:
 
         def _try_merge(secs, attempt=1):
             request = self.prompt_builder.build_merge(secs, connections_info=connections_text)
-            request.max_tokens = max_output
-            est = (len(request.system_prompt) + len(request.user_prompt)) // 3 + max_output
+            total_chars = sum(len(s) for s in secs)
+            ceiling = min(8192, max(4096, int(total_chars * 0.7)))
+            request.max_tokens = ceiling
+            est = (len(request.system_prompt) + len(request.user_prompt)) // 3 + ceiling
             self._wait_for_groq_tpm(est, model=Config.REASONING_MODEL)
             try:
                 response = self._groq.generate(request, model=Config.REASONING_MODEL)
@@ -238,7 +281,18 @@ class AIService:
                     print("  OSS-120B merge failed after retries, falling back to Gemini", flush=True)
                     if progress_callback:
                         progress_callback("Merge rate limited on Groq, switching to Gemini...")
-                    return self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL).raw_output
+                    gemini_last_error = None
+                    for g_attempt in range(3):
+                        try:
+                            return self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL).raw_output
+                        except Exception as ge:
+                            gemini_last_error = ge
+                            msg = f"  Gemini merge attempt {g_attempt + 1} failed: {ge}"
+                            print(msg, flush=True)
+                            if progress_callback:
+                                progress_callback(msg)
+                            time.sleep(10)
+                    raise RuntimeError(f"Gemini merge failed after 3 retries: {gemini_last_error}")
                 msg = f"Rate limit hit during merge (attempt {attempt}), pausing 30s for cooldown..."
                 print(f"  {msg}", flush=True)
                 if progress_callback:
