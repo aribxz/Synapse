@@ -33,8 +33,6 @@ class PipelineService:
 
         generated_sections = []
         all_connections = []
-        source_labels = []
-        sections_per_source = []
 
         valid_sources = [s for s in collection.sources if s.raw_content and len(s.raw_content.strip()) >= 200]
         total_valid = len(valid_sources)
@@ -87,8 +85,6 @@ class PipelineService:
                     generated, connections = e.value
                     generated_sections.extend(generated)
                     all_connections.extend(connections)
-                    source_labels.append(source.title)
-                    sections_per_source.append(len(generated))
                     break
 
         yield 78, "Merging sections...", ""
@@ -109,8 +105,6 @@ class PipelineService:
                     generated_sections,
                     connections_info=all_connections,
                     progress_callback=on_merge_progress,
-                    source_labels=source_labels,
-                    sections_per_source=sections_per_source,
                 )
                 for m in merge_msgs:
                     yield 78, m, ""

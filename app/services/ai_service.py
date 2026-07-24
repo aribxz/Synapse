@@ -1,4 +1,5 @@
 import json
+import re
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -286,6 +287,74 @@ class AIService:
             return ""
 
     @staticmethod
+    def _parse_toc_parts(toc_text: str) -> list[tuple[int, str, list[str]]]:
+        import re
+        parts = []
+        current_part = None
+        current_label = ""
+        current_headings = []
+        for line in toc_text.split("\n"):
+            stripped = line.strip()
+            m = re.match(r"^### Part\s+([IVXLCDM]+):\s*(.+)$", stripped)
+            if m:
+                if current_part is not None:
+                    parts.append((current_part, current_label, current_headings))
+                roman = m.group(1)
+                current_label = m.group(2).strip()
+                roman_to_int = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6}
+                current_part = roman_to_int.get(roman, len(parts) + 1)
+                current_headings = []
+                continue
+            m2 = re.match(r"^- \[\[#(.+)\]\]$", stripped)
+            if m2 and current_part is not None:
+                current_headings.append(m2.group(1).strip())
+        if current_part is not None:
+            parts.append((current_part, current_label, current_headings))
+        return parts
+
+    @staticmethod
+    def _insert_part_dividers(merged: str, parts: list[tuple[int, str, list[str]]]) -> str:
+        if not parts:
+            return merged
+        heading_to_part = {}
+        for part_num, part_label, headings in parts:
+            for h in headings:
+                heading_to_part[h] = (part_num, part_label)
+        ROMAN = ["I", "II", "III", "IV", "V", "VI"]
+        lines = merged.split("\n")
+        result = []
+        current_part = 0
+        h3_counter = 0
+        for line in lines:
+            stripped = line.strip()
+            heading_match = re.match(r"^(#{2,3})\s+(.+)$", stripped)
+            if heading_match:
+                heading_text = heading_match.group(2).strip()
+                if heading_text in heading_to_part:
+                    new_part_num, part_label = heading_to_part[heading_text]
+                    if new_part_num != current_part:
+                        h3_counter = 0
+                        r = ROMAN[new_part_num - 1] if new_part_num <= 6 else f"Part {new_part_num}"
+                        result.append("")
+                        result.append("---")
+                        result.append("")
+                        result.append(f"# ▣ {r}: {part_label}")
+                        result.append("")
+                        result.append("---")
+                        result.append("")
+                        current_part = new_part_num
+            if stripped.startswith("### ") and current_part > 0:
+                h_text = stripped.lstrip("#").strip()
+                if h_text not in heading_to_part:
+                    h3_counter += 1
+                    indent = line[:len(line) - len(line.lstrip())]
+                    content = stripped[4:].strip()
+                    result.append(f"{indent}### {current_part}.{h3_counter} — {content}")
+                    continue
+            result.append(line)
+        return "\n".join(result)
+
+    @staticmethod
     def _extract_h2_heading(text: str) -> str | None:
         for line in text.split("\n"):
             stripped = line.strip()
@@ -293,8 +362,7 @@ class AIService:
                 return stripped.lstrip("#").strip()
         return None
 
-    def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None, source_labels: list[str] | None = None, sections_per_source: list[int] | None = None):
-        ROMAN = ["I", "II", "III", "IV", "V", "VI"]
+    def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
 
         # 1. Calculate target word count (100% preservation)
         teaching_words = sum(len(s.split()) for s in sections)
@@ -319,62 +387,67 @@ class AIService:
                 parts.append(transitions[i])
         merged = "\n\n".join(parts)
 
-        # 4. Build navigation bar grouped by source
-        toc_lines = ["## 🗺️ Navigation", ""]
-        if source_labels and sections_per_source:
-            idx = 0
-            for group_i, (label, cnt) in enumerate(zip(source_labels, sections_per_source)):
-                if cnt == 0:
-                    continue
-                part = ROMAN[group_i] if group_i < len(ROMAN) else f"Part {group_i+1}"
-                toc_lines.append(f"### {part}: {label}")
-                for h_idx in range(idx, min(idx + cnt, len(sections))):
-                    heading = self._extract_h2_heading(sections[h_idx])
-                    if heading:
-                        toc_lines.append(f"- [[#{heading}]]")
-                idx += cnt
-                toc_lines.append("")
-        else:
-            for sec in sections:
-                heading = self._extract_h2_heading(sec)
-                if heading:
-                    toc_lines.append(f"- [[#{heading}]]")
+        # 4. Extract h2 headings (for fallback nav bar)
+        section_headings = []
+        for sec in sections:
+            h = self._extract_h2_heading(sec)
+            if h:
+                section_headings.append(h)
 
-        toc = "\n".join(toc_lines).rstrip()
-        merged = toc + "\n\n" + merged
-        num_parts = len(source_labels) if source_labels is not None else 1
-        print(f"  Navigation: grouped into {num_parts} part(s)", flush=True)
-
-        # 5. Generate glossary + sources (additive only, no body rewriting)
+        # 5. Generate grouped TOC + glossary + sources via LLM
+        toc_text = ""
+        glossary = ""
+        sources = ""
         try:
             struct_request = self.prompt_builder.build_document_structure(merged, target_words)
             struct_response = self._gemini.generate(struct_request, model=Config.GEMINI_FAST_MODEL)
             struct_text = struct_response.raw_output.strip()
 
-            glossary = ""
-            sources = ""
-            current_section = ""
-            for line in struct_text.split("\n"):
-                if line.strip() == "---GLOSSARY---":
-                    current_section = "glossary"
-                elif line.strip() == "---SOURCES---":
-                    current_section = "sources"
-                elif current_section == "glossary":
-                    glossary += line + "\n"
-                elif current_section == "sources":
-                    sources += line + "\n"
+            import re
+            toc_m = re.search(r"---TOC---\s*(.*?)\s*---ENDTOC---", struct_text, re.DOTALL)
+            if toc_m:
+                toc_text = toc_m.group(1).strip()
+            gl_m = re.search(r"---GLOSSARY---\s*(.*?)\s*---ENDGLOSSARY---", struct_text, re.DOTALL)
+            if gl_m:
+                glossary = gl_m.group(1).strip()
+            src_m = re.search(r"---SOURCES---\s*(.*?)\s*---ENDSOURCES---", struct_text, re.DOTALL)
+            if src_m:
+                sources = src_m.group(1).strip()
 
-            glossary = glossary.strip()
-            sources = sources.strip()
-
+            if toc_text:
+                # Strip any existing structural dividers from LLM's TOC
+                # (LLM sometimes outputs ## ▣ lines inside TOC markers)
+                toc_lines = [l for l in toc_text.split("\n") if "\u25a3" not in l]
+                toc_text = "\n".join(toc_lines)
+                merged = toc_text + "\n\n" + merged
+                print(f"  Grouped TOC: {toc_text.count(chr(10)) + 1} lines", flush=True)
+            else:
+                toc_text = ""
             if glossary:
                 merged = merged + "\n\n---\n\n" + glossary
             if sources:
                 merged = merged + "\n\n" + sources
-
             print(f"  Structure: Glossary ({len(glossary)} chars), Sources ({len(sources)} chars)", flush=True)
         except Exception as e:
-            print(f"  Structure generation failed: {e} — continuing with concatenation", flush=True)
+            print(f"  Structure generation failed: {e} — falling back to flat nav bar", flush=True)
+            toc_text = ""
+
+        # 5b. Insert H1 part dividers and renumber ### subheadings
+        if toc_text:
+            parts = self._parse_toc_parts(toc_text)
+            if parts:
+                merged = self._insert_part_dividers(merged, parts)
+                print(f"  Part dividers: {len(parts)} part(s), subheadings renumbered", flush=True)
+            # Fix LLM sometimes outputting ### 🗺️ Navigation instead of ##
+            merged = merged.replace("### 🗺️ Navigation", "## 🗺️ Navigation")
+        # 5c. Fallback: flat programmatic nav bar if LLM grouping failed
+        if not toc_text:
+            toc_lines = ["## 🗺️ Navigation", ""]
+            for h in section_headings:
+                toc_lines.append(f"- [[#{h}]]")
+            flat_toc = "\n".join(toc_lines)
+            merged = flat_toc + "\n\n" + merged
+            print(f"  Flat nav bar: {len(section_headings)} entries", flush=True)
 
         # 6. Post-merge validation
         merged_words = len(merged.split())

@@ -36,10 +36,12 @@ All mathematical notation must be wrapped in proper LaTeX delimiters:
 - Use $\\text{{}}$ for words inside math: $\\text{{surprise}} = -\\log_2(p)$
 - Use $\\sum$ for summation, $\\to$ for arrows
 - Never use Unicode math characters (log₂, Σ, →, ≈) inside math delimiters — use LaTeX equivalents
+- Wrap your single most important display formula per section in $$\\boxed{...}$$ to make it visually stand out
 
 Good:
   The formula for entropy is $H(X) = -\\sum p(x) \\log_2 p(x)$.
-  $$H(X) = -\\sum_{{i=1}}^{{n}} p(x_i) \\log_2 p(x_i)$$
+  $$\\boxed{{H(X) = -\\sum_{{i=1}}^{{n}} p(x_i) \\log_2 p(x_i)}}$$
+  The boxed version is for the key formula that everything else builds toward.
 
 Bad:
   The formula is `H = -Σ p log p` (code block, Unicode, no base).
@@ -56,7 +58,7 @@ Every section should feel like one continuous explanation, not a template.
 - Build up step by step. Don't dump everything at once.
 - Pick sub-headings that fit the specific topic, not the same generic ones every time. Vary your structure.
 - A forward transition to the next topic is optional. Don't force one if it feels unnatural.
-- If you do end with a forward-looking sentence, vary the phrasing. Avoid starting every final paragraph with "So, how do we actually..." or "So how does..." or "So what does..." — that pattern gets repetitive fast.
+- If you do end with a forward-looking sentence, vary the phrasing. Never start one with "So, how do we" — with or without "actually". Also avoid "So how does", "So what does", "So once you've". Each transition should feel like a fresh sentence, not a formula.
 
 ====================
 DIAGRAMS
@@ -108,6 +110,7 @@ Format convention (use this exact pattern every time):
 
 Available types:
 > [!note] **Extra context or side notes**
+> [!abstract] **Pipeline or process summary**
 > [!tip] **Practical advice or shortcuts**
 > [!warning] **Common mistakes — things people get wrong**
 > [!danger] **Critical pitfalls — things that can silently break your model**
@@ -199,12 +202,18 @@ Every major concept should include a concrete worked example:
 - Add a Mermaid diagram showing the split / structure when helpful.
 - Add a `> [!example]` callout framing the example.
 - Add a `> [!tip]` after the result explaining what the number means intuitively.
+- For multi-step calculations (gradient descent iterations, residual updates, tree splitting), show each step in a table with intermediate values:
+  | Step | Prediction | Residual | New Prediction |
+  |------|------------|----------|----------------|
+  | 0    | 0.50       | +0.50    | 0.50           |
+  | 1    | 0.50       | +0.50    | 0.50 + η × 0.50 |
+  Clear tables make the iteration visible in a way prose can't match.
 
 ====================
 COMPARISON TABLES
 ====================
 
-When contrasting multiple approaches (e.g., Ridge vs Lasso vs Elastic Net, Classification vs Regression), use side-by-side comparison tables:
+Any section contrasting two or more methods must include a side-by-side comparison table. For example, if you contrast Ridge vs Lasso vs Elastic Net, Classification vs Regression, or Random Forest vs Gradient Boosting, add a table:
 
   | Feature | Method A | Method B | Method C |
   |---------|----------|----------|----------|
@@ -222,7 +231,7 @@ Rules:
 INTUITION AND INSIGHTS
 ====================
 
-After presenting each formula or mechanism, add one of these four patterns:
+After presenting each formula or mechanism, add one of these five patterns:
 
 1. **Why This Works (Intuition):** Explain the formula in plain terms. What does each part do? Why is it shaped this way?
    > [!tip] The numerator measures X, the denominator controls Y. When X is large and Y is small, the score is high — meaning...
@@ -235,6 +244,10 @@ After presenting each formula or mechanism, add one of these four patterns:
 
 4. **Counterintuitive:** Something that surprises most learners.
    > [!danger] More data does NOT always help. If your learning curve has already flatlined (high bias), collecting more data is a waste of time.
+
+5. **Full Walkthrough:** Show the complete derivation from first principles to final formula, with at least one intermediate step visible. Use a table of intermediate values when tracking iterative changes.
+   > [!example] **Deriving the Update Rule**
+   > Start with the loss, take the derivative, set to zero, solve. Then show each intermediate substitution with actual numbers.
 
 Rules:
 - One insight per formula, not one per paragraph.

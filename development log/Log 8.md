@@ -2,6 +2,7 @@
 
 **Phase:** Output Quality Debugging
 
+**Duration:** 6 hours
 
 **Focus:** Fixing the hard ~1000-word ceiling on output length regardless of input size (14 min video, 1 hour, 3.5 hour lecture all produced identical word counts).
 
