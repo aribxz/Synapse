@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AGENTS.md",
+                "file": "notes_test/test63.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "AGENTS"
+              "title": "test63"
             }
           }
         ]
@@ -197,12 +197,16 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
+    "notes_test/test61.md",
+    "notes_test/test62.md",
+    "notes_test/test63.md",
+    "development log/Log 10.md",
+    "AGENTS.md",
     "Concepts.md",
     "Architecture.md",
     "notes39.md",
     "flow.md",
     "codebase_dump.md",
-    "notes_test/test61.md",
     "notes_test/test60.md",
     "development log/Log 9.md",
     "development log/Log 8.md",
@@ -221,14 +225,10 @@
     "notes_test/test50.md",
     "notes_test/test49.md",
     "notes_test/test48.md",
-    "notes_test/test50 (1).md",
     "app/llm/prompts/__pycache__/document_structure.cpython-314.pyc",
     "app/llm/prompts/__pycache__/transition.cpython-314.pyc",
     "app/llm/prompts/document_structure.py",
     "app/llm/prompts/transition.py",
-    "AGENTS.md",
-    "development log/Log 3.md",
-    "development log/Log 5.md",
     "app/static/me.jpg",
     "app/static",
     "app/templates/about.html",

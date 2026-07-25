@@ -1,3 +1,5 @@
+# Main filein Processing folder. It cleans the raw text, adds metadata and token estimation and gives it back to collection.
+
 from app.processing.cleaners import TextCleaner
 from app.processing.metadata import MetadataExtractor
 from app.processing.token_estimator import TokenEstimator

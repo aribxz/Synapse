@@ -1,3 +1,6 @@
+# This file just prepares the input. It does not do any other modifications.
+# It converts urls, forms into KnowledgeCollection objects so that the rest of the pipeline can work with it.
+
 from app.models.enums import SourceType
 from app.models.knowledge_collection import KnowledgeCollection
 from app.models.knowledge_source import KnowledgeSource
@@ -16,26 +19,26 @@ class InputController:
     def process_request(self, request, fast_model="gemini"):
         collection = KnowledgeCollection()
 
-        upload_folder = Path("uploads")
-        upload_folder.mkdir(exist_ok=True)
+        upload_folder = Path("uploads") # A Path knows how to join folders correctly on Windows, Linux, and macOS.
+        upload_folder.mkdir(exist_ok=True) # Create the uploads folder if it doesn't already exist.
 
-        for file in request.files.getlist("files"):
+        for file in request.files.getlist("files"): # Loops through all the uploaded files.
             if file.filename == "":
                 continue
 
-            filename = secure_filename(file.filename)
-            filepath = upload_folder / filename
-            file.save(filepath)
+            filename = secure_filename(file.filename) # Cleans the filename: ../../secret.txt -> secret.txt
+            filepath = upload_folder / filename # Saves the file (HTTP request).
+            file.save(filepath) # Saves it in disk.
 
             source = SourceFactory.from_upload_file(file)
-            source.metadata["path"] = str(filepath)
+            source.metadata["path"] = str(filepath) # Storing the filepath.
 
             collection.sources.append(source)
 
         urls = request.form.get("urls", "")
 
-        for url in urls.splitlines():
-            url = url.strip()
+        for url in urls.splitlines(): # Splits by new lines.
+            url = url.strip() # Removes spaces.
 
             if not url:
                 continue

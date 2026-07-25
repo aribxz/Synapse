@@ -1,5 +1,5 @@
-import json
-from flask import Blueprint, render_template, request, Response, stream_with_context
+import json, os
+from flask import Blueprint, render_template, request, Response, stream_with_context, send_file
 
 from app.controllers.input_controller import InputController
 from app.services.ai_service import AIService
@@ -9,7 +9,7 @@ from app.models.enums import SourceType
 from app.models.knowledge_collection import KnowledgeCollection
 from app.services.extraction_service import ExtractionService
 
-main_bp = Blueprint("main", __name__)
+main_bp = Blueprint("main", __name__) # Name is just storing where the blueprint came from.
 controller = InputController()
 
 @main_bp.route("/")
@@ -27,58 +27,36 @@ def process():
 
     gen = controller.process_request(request, fast_model=fast_model)
 
+    is_xhr = request.headers.get("X-Requested-With") == "XMLHttpRequest" # Checks for JavaScript.
+
+    if not is_xhr:
+        try:
+            while True:  # This generates the chunk and for each chunk the generate function retrives some information about it to be displayed at the frontend.
+                pct, msg, title = next(gen)
+        except StopIteration as e:
+            output_file = e.value
+
+        return send_file(output_file, as_attachment=True, download_name="notes.md", mimetype="text/markdown")
+
     def generate():
         nonlocal gen
         try:
             while True:
                 pct, msg, title = next(gen)
-                yield json.dumps({"pct": pct, "msg": msg, "title": title}) + "\n"
+                yield json.dumps({"pct": pct, "msg": msg, "title": title}) + "\n"  # Streaming.
         except StopIteration as e:
             output_file = e.value
 
-        with open(output_file, "r", encoding="utf-8") as f:
+        with open(output_file, "r", encoding="utf-8") as f: # Actual markdown.
             content = f.read()
-        yield json.dumps({"type": "file", "content": content, "filename": "notes.md"}) + "\n"
 
-    return Response(stream_with_context(generate()), mimetype="text/plain")
+        yield json.dumps({"type": "file", "content": content, "filename": "notes.md"}) + "\n" # See the content (important because the frontend receives it and sees that it is done. Notice that the frontend can only receive plain json that is why we do this).
 
-# @main_bp.route("/test-ai")
-# def test_ai():
-#     text = "Linear Regression is a supervised machine learning algorithm..."
-#     ai = AIService()
-#     try:
-#         notes = ai.generate_from_chunks(text)
-#         return f"<pre>{notes}</pre>"
-#     except Exception as e:
-#         # This will show you the exact error in your browser instead of crashing
-#         return f"<h1>AI Error:</h1><pre>{str(e)}</pre>", 500
-    
+    return Response(stream_with_context(generate()), mimetype="text/plain") # Offer it for download.
 
-@main_bp.route("/test-chunk")
-def test_chunk():
-
-    source = KnowledgeSource(
-        source_type=SourceType.PDF,
-        title="Test PDF",
-        metadata={
-            "path": "test.pdf"
-        }
-    )
-
-    collection = KnowledgeCollection([source])
-    extraction = ExtractionService()
-    collection = extraction.process(collection)
-
-    chunk_service = ChunkingService()
-
-    chunks = chunk_service.process(
-        collection.sources[0]
-    )
-
-    return {
-        "chunk_count": len(chunks),
-        "sizes": [
-            chunk.estimated_tokens
-            for chunk in chunks
-        ]
-    }
+'''
+Flow:
+    First the generate() gets called
+    it calls next(gen) -> that gets information about pct, msg, title
+    back to generate() where it steams this response and gives the message to the frontend.
+'''

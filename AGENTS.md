@@ -1,4 +1,4 @@
-# Hybrid Assistant System (HAS)
+# Synapse
 
 Flask app that converts YouTube/PDF/DOCX/PPTX/webpages → beautiful Obsidian Markdown study notes using Groq/Gemini LLMs.
 

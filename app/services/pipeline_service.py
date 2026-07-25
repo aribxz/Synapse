@@ -131,4 +131,3 @@ class PipelineService:
 
         yield 100, "Done! Downloading notes...", ""
         return output_file
-

@@ -1,3 +1,5 @@
+# Main file in ingestion folder. It calls registry to know what type of extract to call and then gives the extracted text.
+
 from app.ingestion.registry import ExtractorRegistry
 
 class InputRouter:

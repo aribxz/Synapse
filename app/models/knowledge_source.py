@@ -1,3 +1,5 @@
+# This contains the initial Knowledge object, basically if a user uploads 2 pdfs then 2 KnowledgeSource objects are intiated for each of them.
+
 from dataclasses import dataclass, field
 from typing import Optional
 from uuid import uuid4

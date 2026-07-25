@@ -1,3 +1,5 @@
+# Main job is to decide what type of input there is on the frontend and direct the information about it to input_controller.
+
 from pathlib import Path
 
 from app.models.enums import SourceType

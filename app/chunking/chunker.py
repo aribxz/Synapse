@@ -1,5 +1,6 @@
-from app.chunking.chunk import Chunk
+# This is the heart of chunk calculation that you see in the beginning.
 
+from app.chunking.chunk import Chunk
 
 class Chunker:
 
@@ -7,9 +8,9 @@ class Chunker:
         self.max_tokens = max_tokens
 
     def chunk(self, text: str) -> list[Chunk]:
-        words = text.split()
-        chunks = []
-        current_words = []
+        words = text.split() # Splits all words such that "Word 1", "Word 2" and so on.
+        chunks = [] # All finished chunks.
+        current_words = [] # Chunk currently building.
         current_tokens = 0
         chunk_id = 1
 
@@ -20,10 +21,11 @@ class Chunker:
                 chunks.append(
                     Chunk(
                         id=chunk_id,
-                        text=" ".join(current_words),
+                        text=" ".join(current_words), # Joins the words again.
                         estimated_tokens=current_tokens
                     )
                 )
+
                 chunk_id += 1
                 current_words = []
                 current_tokens = 0
@@ -40,6 +42,7 @@ class Chunker:
                     estimated_tokens=current_tokens
                 )
             )
+
         print(f"Created {len(chunks)} chunks.", flush=True)
 
         for chunk in chunks:
