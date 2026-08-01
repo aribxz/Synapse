@@ -1,4 +1,4 @@
-# 🧠 Synapse
+# Synapse
 
 **Turn any learning material into polished, Obsidian-ready study notes — powered by AI.**
 
@@ -15,7 +15,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [✨ Features](#-features)
 - [📥 Supported Inputs](#-supported-inputs)
@@ -32,7 +32,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## ✨ Features
+## Features
 
 - **Multi-format ingestion** — Upload files or paste URLs; Synapse handles the rest
 - **Intelligent chunking** — Large documents are split and mapped to topic outlines automatically
@@ -44,7 +44,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## 📥 Supported Inputs
+## Supported Inputs
 
 | Type | Formats |
 |------|---------|
@@ -54,7 +54,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -112,7 +112,7 @@ gunicorn -w 2 -b 0.0.0.0:5000 "run:app"
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
 Synapse runs a seven-stage pipeline for every request:
 
@@ -147,7 +147,7 @@ Each source is processed independently through stages ③–④, then all sectio
 
 ---
 
-## 📝 Output Example
+## Output Example
 
 Generated notes include:
 
@@ -260,7 +260,7 @@ Synapse/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology |
 |-----------|------------|
@@ -277,7 +277,7 @@ Synapse/
 
 ---
 
-## 🔧 Configuration Reference
+## Configuration Reference
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
@@ -292,7 +292,7 @@ Synapse/
 
 ---
 
-## 🧠 LLM Model Strategy
+## LLM Model Strategy
 
 Synapse assigns models by task complexity:
 
@@ -309,18 +309,18 @@ Teaching generation falls back automatically on rate limit / size errors: **`REA
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 - **[Documentation.md](Documentation.md)** — Full technical reference: architecture, pipeline stages, file-by-file breakdown, prompt engineering, and data-flow diagrams.
 
 ---
 
-## 📜 License
+## License
 
 Provided as-is for personal and educational use. No warranty or support is implied.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 Built with [Groq](https://groq.com/), [Google Gemini](https://deepmind.google/technologies/gemini/), [Flask](https://flask.palletsprojects.com/), and designed for [Obsidian](https://obsidian.md/) note-taking workflows.
