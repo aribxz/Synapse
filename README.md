@@ -1,12 +1,38 @@
-# Synapse
+# 🧠 Synapse
 
 **Turn any learning material into polished, Obsidian-ready study notes — powered by AI.**
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white" alt="Python 3.14">
+  <img src="https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white" alt="Flask 3.1">
+  <img src="https://img.shields.io/badge/Groq-LLM-F55036?logo=groq&logoColor=white" alt="Groq">
+  <img src="https://img.shields.io/badge/Google%20Gemini-LLM-8E75B2?logo=googlegemini&logoColor=white" alt="Google Gemini">
+  <img src="https://img.shields.io/badge/Obsidian-ready-7C3AED?logo=obsidian&logoColor=white" alt="Obsidian-ready">
+  <img src="https://img.shields.io/badge/license-Educational%20Use-1f883d" alt="License">
+</p>
 
 Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube videos, and web pages, then generates structured Markdown study guides with LaTeX math, Mermaid diagrams, callouts, and internal navigation.
 
 ---
 
-## Features
+## 📑 Table of Contents
+
+- [✨ Features](#-features)
+- [📥 Supported Inputs](#-supported-inputs)
+- [🚀 Quick Start](#-quick-start)
+- [⚙️ How It Works](#️-how-it-works)
+- [📝 Output Example](#-output-example)
+- [🗂️ Project Structure](#️-project-structure)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🔧 Configuration Reference](#-configuration-reference)
+- [🧠 LLM Model Strategy](#-llm-model-strategy)
+- [📚 Documentation](#-documentation)
+- [📜 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
+
+---
+
+## ✨ Features
 
 - **Multi-format ingestion** — Upload files or paste URLs; Synapse handles the rest
 - **Intelligent chunking** — Large documents are split and mapped to topic outlines automatically
@@ -18,7 +44,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## Supported Inputs
+## 📥 Supported Inputs
 
 | Type | Formats |
 |------|---------|
@@ -28,7 +54,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -86,7 +112,7 @@ gunicorn -w 2 -b 0.0.0.0:5000 "run:app"
 
 ---
 
-## How It Works
+## ⚙️ How It Works
 
 Synapse runs a seven-stage pipeline for every request:
 
@@ -121,11 +147,11 @@ Each source is processed independently through stages ③–④, then all sectio
 
 ---
 
-## Output Example
+## 📝 Output Example
 
 Generated notes include:
 
-```markdown
+````markdown
 ## 🗺️ Navigation
 
 ### Part I: Linear Regression
@@ -158,11 +184,11 @@ flowchart LR
 |------|------------|
 | **Residual** | The difference between predicted and actual value |
 | **Cost Function** | A measure of how wrong the model's predictions are |
-```
+````
 
 ---
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 Synapse/
@@ -234,7 +260,7 @@ Synapse/
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Component | Technology |
 |-----------|------------|
@@ -251,7 +277,7 @@ Synapse/
 
 ---
 
-## Configuration Reference
+## 🔧 Configuration Reference
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
@@ -266,7 +292,7 @@ Synapse/
 
 ---
 
-## LLM Model Strategy
+## 🧠 LLM Model Strategy
 
 Synapse assigns models by task complexity:
 
@@ -283,18 +309,18 @@ Teaching generation falls back automatically on rate limit / size errors: **`REA
 
 ---
 
-## Documentation
+## 📚 Documentation
 
 - **[Documentation.md](Documentation.md)** — Full technical reference: architecture, pipeline stages, file-by-file breakdown, prompt engineering, and data-flow diagrams.
 
 ---
 
-## License
+## 📜 License
 
 Provided as-is for personal and educational use. No warranty or support is implied.
 
 ---
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 Built with [Groq](https://groq.com/), [Google Gemini](https://deepmind.google/technologies/gemini/), [Flask](https://flask.palletsprojects.com/), and designed for [Obsidian](https://obsidian.md/) note-taking workflows.
