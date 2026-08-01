@@ -1,6 +1,6 @@
 import os
 import re
-from tenacity import (
+from tenacity import ( # Automatically retries.
     retry,
     stop_after_attempt,
     wait_exponential,
@@ -18,17 +18,17 @@ class GroqClient:
     def __init__(self) -> None:
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-    @retry(
-        retry=retry_if_exception_type(Exception),
-        wait=wait_exponential(multiplier=2, min=2, max=30),
+    @retry(  # Decorator due to which retries happen.
+        retry=retry_if_exception_type(Exception), # Retry when exception error happens.
+        wait=wait_exponential(multiplier=2, min=2, max=30), # API backoffs.
         stop=stop_after_attempt(5),
-        reraise=True,
+        reraise=True, # Original error comes back for inspection.
     )
 
     def generate(self, request: LLMRequest, model: str):
         print(f"Using model: {model}", flush=True)
 
-        kwargs = dict(
+        kwargs = dict( # You build a dict because this is the information being sent to the API.
             model=model,
             messages=[
                 {
@@ -41,24 +41,27 @@ class GroqClient:
                 }
             ],
         )
-        if request.max_tokens is not None:
+
+        if request.max_tokens is not None: # If spme max tokens are not specified.
             kwargs["max_tokens"] = request.max_tokens
-        response = self.client.chat.completions.create(**kwargs)
+
+        response = self.client.chat.completions.create(**kwargs) # ** unpacks the dictionary into key-word arguements.
         
-        print("Generation successful.", flush=True)
+        print("Generation successful.", flush=True) # Groq returns a large object so you extract the needed information.
         
-        raw_content = response.choices[0].message.content or "" 
+        raw_content = response.choices[0].message.content or ""  # Gets the actual content.
         # We get huge data back from groq, choices is the list of possible replies, message is the part that contains text and content extracts that text. 
         
         usage = {}
-        if hasattr(response, "usage") and response.usage:
+
+        if hasattr(response, "usage") and response.usage: # To be later used by functions to calculate tokens.
             usage = {
                 "prompt_tokens": response.usage.prompt_tokens or 0,
                 "completion_tokens": response.usage.completion_tokens or 0,
                 "total_tokens": response.usage.total_tokens or 0,
             }
 
-        raw_content = re.sub(
+        raw_content = re.sub(  # To prevent LLM's internal thinking leaking into the notes.
                 r"<think>.*?(?:</think>|$)",
                 "",
                 raw_content,
@@ -66,4 +69,3 @@ class GroqClient:
         ).strip()
 
         return LLMResponse(raw_output=raw_content, usage=usage)               
-         

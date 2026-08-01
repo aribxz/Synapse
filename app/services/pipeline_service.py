@@ -26,19 +26,20 @@ class PipelineService:
         yield 2, "Starting pipeline...", ""
 
         yield 5, "Extracting content from sources...", ""
-        collection = self.extraction.process(collection)
+        collection = self.extraction.process(collection) # From links/pdfs to transcripts.
 
         yield 8, "Processing documents...", ""
-        collection = self.processing.process(collection)
+        collection = self.processing.process(collection) # From transcripts to clean text.
 
         generated_sections = []
         all_connections = []
 
-        valid_sources = [s for s in collection.sources if s.raw_content and len(s.raw_content.strip()) >= 200]
+        valid_sources = [s for s in collection.sources if s.raw_content and len(s.raw_content.strip()) >= 200] # Only sources that were extracted correctly.
         total_valid = len(valid_sources)
         source_idx = 0
 
-        for source in collection.sources:
+        # Processing:
+        for source in collection.sources: # Loop through each source.
             if (not source.raw_content
                 or len(source.raw_content.strip()) < 200
             ):
@@ -53,20 +54,24 @@ class PipelineService:
             if total_valid > 0:
                 source_start = 10 + (source_idx / total_valid) * 68
                 source_end = 10 + ((source_idx + 1) / total_valid) * 68
+
             else:
                 source_start, source_end = 10, 78
+
             source_idx += 1
 
-            yield int(source_start), f"Chunking: {source.title}", source.title
-            chunks = self.chunking.process(source)
+            yield int(source_start), f"Chunking: {source.title}", source.title # Source start and end are helping us give info to the frontend.
+            chunks = self.chunking.process(source) # Converts the cleaned texts into different chunks.
 
             if not chunks:
                 generated_sections.append(f"## {source.title}\n\nNo content was available to chunk from this file.")
                 continue
 
-            yield int(source_start + 6), f"Generating outline for {source.title}", source.title
+            yield int(source_start + 6), f"Generating outline for {source.title}", source.title # Again, progress bar.
+
             try:
-                outline = self.ai.generate_outline(chunks, fast_model=fast_model)
+                outline = self.ai.generate_outline(chunks, fast_model=fast_model) # It decides what chunks are related.
+
             except Exception as exc:
                 generated_sections.append(f"## {source.title}\n\nAI generation failed: {exc}")
                 continue
@@ -74,60 +79,73 @@ class PipelineService:
             ai_start = source_start + 12
             ai_end = source_end
 
-            sub_gen = self.ai.generate_from_chunks(chunks, outline, fast_model=fast_model)
+            sub_gen = self.ai.generate_from_chunks(chunks, outline, fast_model=fast_model) # Generator inside of a generator.
+
             while True:
                 try:
-                    kind, msg, title, pct_in_ai = next(sub_gen)
+                    kind, msg, title, pct_in_ai = next(sub_gen) # We directly calls next(sub_gen).
+
                     if kind == "progress":
                         global_pct = int(ai_start + (pct_in_ai / 100) * (ai_end - ai_start))
-                        yield global_pct, msg, title
+                        yield global_pct, msg, title # Again, progress bar.
+
                 except StopIteration as e:
                     generated, connections = e.value
                     generated_sections.extend(generated)
                     all_connections.extend(connections)
                     break
 
+        # Merging:
         yield 78, "Merging sections...", ""
 
         if not generated_sections:
-            fallback_text = "\n\n".join(
+            fallback_text = "\n\n".join( # Simple join.
                 f"## {source.title}\n\n{source.raw_content[:4000]}"
                 for source in collection.sources
                 if source.raw_content
             )
+
             merged_document = fallback_text or "No content could be generated from the provided input."
+
         else:
             merge_msgs = []
-            def on_merge_progress(msg):
+
+            def on_merge_progress(msg): 
                 merge_msgs.append(msg)
+
             try:
-                merged_document = self.ai.merge_sections(
+                merged_document = self.ai.merge_sections( # Merges the glossary, nav bar etc.
                     generated_sections,
                     connections_info=all_connections,
                     progress_callback=on_merge_progress,
                 )
+
                 for m in merge_msgs:
                     yield 78, m, ""
+
+                # Pure Statistics
                 teaching_total = sum(len(s.split()) for s in generated_sections)
                 merged_words = len(merged_document.split())
                 ratio = merged_words / teaching_total * 100 if teaching_total > 0 else 0
+
                 print("\n========== MERGE STATS ==========", flush=True)
                 print(f"Teaching total: {teaching_total} words", flush=True)
                 print(f"Merged: {merged_words} words ({ratio:.0f}% preserved)", flush=True)
                 print(f"Characters: {len(merged_document)}", flush=True)
                 print("=================================\n", flush=True)
+
             except Exception as exc:
                 merged_document = "\n\n".join(generated_sections)
                 print(f"Merge failed: {exc}", flush=True)
 
         yield 85, "Rendering markdown...", ""
-        markdown = self.renderer.render([merged_document])
+        markdown = self.renderer.render([merged_document]) # Internal document to polished markdown.
 
         yield 90, "Running quality checks...", ""
-        markdown = self.quality_gate.run(markdown, fast_model=fast_model)
+        markdown = self.quality_gate.run(markdown, fast_model=fast_model) # Final inspection.
 
         yield 95, "Exporting...", ""
-        output_file = self.exporter.export(markdown, "notes")
+        output_file = self.exporter.export(markdown, "notes") # Export service.
 
         yield 100, "Done! Downloading notes...", ""
         return output_file

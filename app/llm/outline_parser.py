@@ -1,4 +1,4 @@
-# the parser gains a global map, allowing it to intelligently jump to the exact sections of the documents it needs
+# The parser gains a global map, allowing it to intelligently jump to the exact sections of the documents it needs
 from dataclasses import dataclass
 
 @dataclass

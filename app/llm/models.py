@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from app.models.enums import SourceType
+
 @dataclass
 class LLMRequest:
     system_prompt: str

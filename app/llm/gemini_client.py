@@ -1,3 +1,5 @@
+# Literally the same as client.py which was for groq.
+
 import os
 import re
 from tenacity import (

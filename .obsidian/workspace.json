@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes_test/test63.md",
+                "file": "notes_test/test64.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "test63"
+              "title": "test64"
             }
           }
         ]
@@ -51,7 +51,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -197,16 +199,17 @@
   },
   "active": "4c48cd9b5e903f12",
   "lastOpenFiles": [
+    "Concepts.md",
+    "notes_test/test64.md",
+    "codebase_dump.md",
+    "AGENTS.md",
+    "notes_test/test63.md",
     "notes_test/test61.md",
     "notes_test/test62.md",
-    "notes_test/test63.md",
     "development log/Log 10.md",
-    "AGENTS.md",
-    "Concepts.md",
     "Architecture.md",
     "notes39.md",
     "flow.md",
-    "codebase_dump.md",
     "notes_test/test60.md",
     "development log/Log 9.md",
     "development log/Log 8.md",
@@ -224,7 +227,6 @@
     "notes_test/test51.md",
     "notes_test/test50.md",
     "notes_test/test49.md",
-    "notes_test/test48.md",
     "app/llm/prompts/__pycache__/document_structure.cpython-314.pyc",
     "app/llm/prompts/__pycache__/transition.cpython-314.pyc",
     "app/llm/prompts/document_structure.py",

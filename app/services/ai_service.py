@@ -3,6 +3,7 @@ import re
 import time
 import math
 import threading
+import re
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
@@ -295,16 +296,16 @@ class AIService:
         return OutlineParser().parse(response.raw_output) 
 
     @staticmethod
-    def _get_tail(text: str, n_words: int = 100) -> str:
+    def _get_tail(text: str, n_words: int = 100) -> str: # Gets the last 100 words.
         words = text.split()
         return " ".join(words[-n_words:]) if len(words) > n_words else text
 
     @staticmethod
-    def _get_head(text: str, n_words: int = 100) -> str:
+    def _get_head(text: str, n_words: int = 100) -> str: # Gets the first 100 words.
         words = text.split()
         return " ".join(words[:n_words]) if len(words) > n_words else text
 
-    def _generate_transition(self, prev_tail: str, next_head: str, progress_callback=None) -> str:
+    def _generate_transition(self, prev_tail: str, next_head: str, progress_callback=None) -> str: # Given the above two functions, this helps us to get more context on how to shift onto the next topic.
         request = self.prompt_builder.build_transition(prev_tail, next_head)
         try:
             response = self._gemini.generate(request, model=Config.GEMINI_FAST_MODEL)
@@ -317,7 +318,7 @@ class AIService:
             return ""
 
     @staticmethod
-    def _parse_toc_parts(toc_text: str) -> list[tuple[int, str, list[str]]]:
+    def _parse_toc_parts(toc_text: str) -> list[tuple[int, str, list[str]]]: # Pure formatting.
         import re
         parts = []
         current_part = None
@@ -393,48 +394,49 @@ class AIService:
         return None
 
     def merge_sections(self, sections, connections_info: list[str] | None = None, progress_callback=None):
-
-        # 1. Calculate target word count (100% preservation)
-        teaching_words = sum(len(s.split()) for s in sections)
-        target_words = teaching_words
+        teaching_words = sum(len(s.split()) for s in sections) # Calculate word count throughout all sections.
+        target_words = teaching_words # We do this so that the LLM does not summarize and trim down content.
         print(f"  Teaching total: {teaching_words} words across {len(sections)} sections", flush=True)
 
-        # 2. Generate transitions between section boundaries
         transitions = []
-        for i in range(len(sections) - 1):
-            prev_tail = self._get_tail(sections[i])
-            next_head = self._get_head(sections[i + 1])
-            transition = self._generate_transition(prev_tail, next_head, progress_callback)
-            transitions.append(transition)
+        for i in range(len(sections) - 1): # Section transitions from A -> B then B -> C etc.
+            prev_tail = self._get_tail(sections[i]) # Get previous section.
+            next_head = self._get_head(sections[i + 1]) # Get next section
+            transition = self._generate_transition(prev_tail, next_head, progress_callback) # Make transition between them.
+            transitions.append(transition) # Append it.
+
             if transition:
                 print(f"  Transition {i+1}/{len(sections)-1}: {transition[:80]}...", flush=True)
 
-        # 3. Concatenate sections with transitions inserted between them
-        parts = []
+        parts = [] # Joining sections with their transitions.
         for i, sec in enumerate(sections):
             parts.append(sec)
-            if i < len(transitions) and transitions[i]:
-                parts.append(transitions[i])
-        merged = "\n\n".join(parts)
 
-        # 4. Extract h2 headings (for fallback nav bar)
+            if i < len(transitions) and transitions[i]: # It becomes like: Section 1 -> transition 1 -> Section 2 -> transition 2 etc.
+                parts.append(transitions[i])
+
+        merged = "\n\n".join(parts) # Merge them all at the end.
+
         section_headings = []
         for sec in sections:
-            h = self._extract_h2_heading(sec)
+            h = self._extract_h2_heading(sec) # Extract all sections headings.
+
             if h:
                 section_headings.append(h)
 
-        # 5. Generate grouped TOC + glossary + sources via LLM
         toc_text = ""
         glossary = ""
         sources = ""
-        try:
-            struct_request = self.prompt_builder.build_document_structure(merged, target_words)
-            struct_response = self._gemini.generate(struct_request, model=Config.GEMINI_FAST_MODEL)
-            struct_text = struct_response.raw_output.strip()
 
-            import re
+        try:
+            struct_request = self.prompt_builder.build_document_structure(merged, target_words) # Build the prompt.
+            struct_response = self._gemini.generate(struct_request, model=Config.GEMINI_FAST_MODEL) # Generate response.
+            struct_text = struct_response.raw_output.strip() 
+
+
+            # These couple of lines gets the relevant information.
             toc_m = re.search(r"---TOC---\s*(.*?)\s*---ENDTOC---", struct_text, re.DOTALL)
+
             if toc_m:
                 toc_text = toc_m.group(1).strip()
             gl_m = re.search(r"---GLOSSARY---\s*(.*?)\s*---ENDGLOSSARY---", struct_text, re.DOTALL)
@@ -462,7 +464,6 @@ class AIService:
             print(f"  Structure generation failed: {e} — falling back to flat nav bar", flush=True)
             toc_text = ""
 
-        # 5b. Insert H1 part dividers and renumber ### subheadings
         if toc_text:
             parts = self._parse_toc_parts(toc_text)
             if parts:
@@ -470,7 +471,8 @@ class AIService:
                 print(f"  Part dividers: {len(parts)} part(s), subheadings renumbered", flush=True)
             # Fix LLM sometimes outputting ### 🗺️ Navigation instead of ##
             merged = merged.replace("### 🗺️ Navigation", "## 🗺️ Navigation")
-        # 5c. Fallback: flat programmatic nav bar if LLM grouping failed
+
+        # Fallback: flat programmatic nav bar if LLM grouping failed
         if not toc_text:
             toc_lines = ["## 🗺️ Navigation", ""]
             for h in section_headings:
@@ -479,7 +481,6 @@ class AIService:
             merged = flat_toc + "\n\n" + merged
             print(f"  Flat nav bar: {len(section_headings)} entries", flush=True)
 
-        # 6. Post-merge validation
         merged_words = len(merged.split())
         ratio = merged_words / target_words if target_words > 0 else 1.0
         print(f"  Merged: {merged_words} words ({ratio:.0%} of teaching total)", flush=True)
@@ -492,23 +493,27 @@ class AIService:
 
         return merged
 
-    def repair_block(self, broken_block: str, issue_category: str, issue_message: str, fast_model="gemini") -> str:
-        request = LLMRequest(
+    def repair_block(self, broken_block: str, issue_category: str, issue_message: str, fast_model="gemini") -> str: 
+        request = LLMRequest( # Prompt is tiny so straight to generation.
             system_prompt=REPAIR_PROMPT,
             user_prompt=f"Issue: [{issue_category}] {issue_message}\n\nBroken block:\n{broken_block}",
         )
+
         if fast_model != "gemini":
             self._wait_for_groq_tpm(500, model=LLAMA_MODEL)
+
         response = self._generate_fast(request, fast_model=fast_model)
+
         if fast_model != "gemini":
             self._track_groq_usage(response.usage, model=LLAMA_MODEL)
-        return response.raw_output
 
-    def _collect_topic_text(self, topic, chunks):
+        return response.raw_output # No need for parser as this is the final output.
+
+    def _collect_topic_text(self, topic, chunks): # This makes chunks meaningful. It gives chunk x's actual content to the LLM.
         selected = []
 
-        for index in topic.source_chunks:
-            if 1 <= index <= len(chunks):
+        for index in topic.source_chunks: # Loops through the specific chunks.
+            if 1 <= index <= len(chunks): # Safety net in case of weird behaviour by the LLM.
                 selected.append(chunks[index - 1].text)
 
         return "\n\n".join(selected)
