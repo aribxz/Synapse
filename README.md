@@ -166,59 +166,70 @@ flowchart LR
 
 ```
 Synapse/
-├── run.py                          # Application entry point
-├── config.py                       # Environment configuration
-├── requirements.txt                # Python dependencies
-├── Documentation.md                # Full technical documentation
+├── run.py                     # Application entry point
+├── config.py                  # Environment configuration
+├── requirements.txt           # Python dependencies
+├── .python-version            # Pinned Python version (3.14.3)
+├── Documentation.md           # Full technical documentation
+├── README.md                  # This file
 │
 ├── app/
-│   ├── __init__.py                 # Flask app factory
+│   ├── __init__.py            # Flask app factory
 │   ├── routes/
-│   │   └── main.py                 # HTTP routes (/process streaming)
+│   │   └── main.py            # HTTP routes (/process streaming)
 │   ├── controllers/
-│   │   ├── input_controller.py     # Request → KnowledgeCollection
-│   │   └── source_factory.py       # File/URL type detection
+│   │   ├── input_controller.py    # Request → KnowledgeCollection
+│   │   └── source_factory.py      # File/URL type detection
 │   ├── models/
-│   │   ├── enums.py                # SourceType, ProcessingStatus
-│   │   ├── knowledge_source.py     # Single input source
+│   │   ├── enums.py           # SourceType, ProcessingStatus
+│   │   ├── knowledge_source.py    # Single input source
 │   │   └── knowledge_collection.py # Multi-source container
 │   ├── ingestion/
-│   │   ├── router.py               # Extractor routing
-│   │   ├── registry.py             # SourceType → Extractor map
-│   │   ├── base_extractor.py       # Abstract extractor
-│   │   └── extractors/             # PDF, DOCX, PPTX, TXT, YouTube, Web
+│   │   ├── router.py          # Extractor routing
+│   │   ├── registry.py        # SourceType → Extractor map
+│   │   ├── base_extractor.py  # Abstract extractor
+│   │   └── extractors/        # PDF, DOCX, PPTX, TXT, YouTube, Web
 │   ├── processing/
-│   │   ├── document_processor.py   # Clean + enrich orchestrator
-│   │   ├── cleaners.py             # Whitespace normalization
-│   │   ├── metadata.py             # Word/character counts
-│   │   └── token_estimator.py      # Token estimation
+│   │   ├── document_processor.py # Clean + enrich orchestrator
+│   │   ├── cleaners.py        # Whitespace normalization
+│   │   ├── metadata.py        # Word/character counts
+│   │   └── token_estimator.py # Token estimation
 │   ├── chunking/
-│   │   ├── chunk.py                # Chunk dataclass
-│   │   └── chunker.py              # Word-based splitting
+│   │   ├── chunk.py           # Chunk dataclass
+│   │   └── chunker.py         # Word-based splitting
 │   ├── llm/
-│   │   ├── client.py               # Groq API client
-│   │   ├── gemini_client.py        # Gemini API client
-│   │   ├── prompt_builder.py       # Prompt assembly
-│   │   ├── outline_parser.py       # Outline response parser
-│   │   ├── extraction_parser.py    # JSON knowledge parser
-│   │   ├── models.py               # LLM request/response types
-│   │   ├── knowledge_models.py     # ExtractedKnowledge schema
-│   │   └── prompts/                # All LLM system prompts
+│   │   ├── client.py          # Groq API client
+│   │   ├── gemini_client.py   # Gemini API client
+│   │   ├── prompt_builder.py  # Prompt assembly
+│   │   ├── outline_parser.py  # Outline response parser
+│   │   ├── extraction_parser.py # JSON knowledge parser
+│   │   ├── models.py          # LLM request/response types
+│   │   ├── knowledge_models.py # ExtractedKnowledge schema
+│   │   └── prompts/           # LLM system prompts
+│   │       ├── outline.py
+│   │       ├── extraction.py
+│   │       ├── teaching.py
+│   │       ├── transition.py
+│   │       ├── document_structure.py
+│   │       ├── repair.py
+│   │       └── base.py
 │   ├── services/
-│   │   ├── pipeline_service.py     # Full pipeline orchestrator
-│   │   ├── extraction_service.py   # Extraction orchestrator
-│   │   ├── chunking_service.py     # Chunking wrapper
-│   │   ├── ai_service.py           # LLM orchestration + merge
-│   │   ├── quality_gate.py         # Validation + AI repair
-│   │   └── export_service.py       # File output
+│   │   ├── pipeline_service.py    # Full pipeline orchestrator
+│   │   ├── extraction_service.py  # Extraction orchestrator
+│   │   ├── chunking_service.py    # Chunking wrapper
+│   │   ├── ai_service.py      # LLM orchestration + merge
+│   │   ├── quality_gate.py    # Validation + AI repair
+│   │   └── export_service.py # File output
 │   ├── rendering/
-│   │   ├── markdown_renderer.py    # Obsidian-compatible fixes
-│   │   └── linter.py               # Mermaid/math/wikilink linting
-│   ├── templates/                  # Frontend HTML (index, about)
-│   └── outputs/                    # Generated notes (gitignored)
+│   │   ├── markdown_renderer.py # Obsidian-compatible fixes
+│   │   └── linter.py          # Mermaid/math/wikilink linting
+│   ├── static/                # Static assets (me.jpg)
+│   ├── templates/             # Frontend HTML (index, about)
+│   └── outputs/               # Generated notes (gitignored)
 │
-├── uploads/                        # Temporary uploads (gitignored)
-└── notes_test/                     # Sample output files
+├── uploads/                   # Temporary uploads (gitignored)
+├── notes_test/                # Sample output files
+└── development log/           # Day-by-day development notes
 ```
 
 ---
@@ -227,8 +238,9 @@ Synapse/
 
 | Component | Technology |
 |-----------|------------|
-| Web framework | Flask 3.1 |
-| LLM providers | Groq (Llama 3.3, GPT-OSS-120B), Google Gemini |
+| Web framework | Flask 3.1.3 |
+| LLM providers | Groq (Llama 3.3, GPT-OSS-120B), Google Gemini (google-genai) |
+| Env configuration | python-dotenv |
 | PDF extraction | PyMuPDF |
 | Document parsing | python-docx, python-pptx |
 | YouTube transcripts | youtube-transcript-api |
@@ -260,28 +272,26 @@ Synapse assigns models by task complexity:
 
 | Task | Model | Why |
 |------|-------|-----|
-| Outline planning | Fast (user choice) | Structured output, low creativity needed |
-| Knowledge extraction | Fast (user choice) | JSON extraction, factual |
-| Teaching / writing | Reasoning (GPT-OSS-120B) | High-quality prose, analogies, examples |
-| Transitions | Gemini Flash Lite | Short, creative bridges |
-| Document structure | Gemini Flash Lite | TOC and glossary generation |
-| Block repair | Fast (user choice) | Targeted syntax fixes |
+| Outline planning | Fast model (default: Gemini) | Structured output, low creativity needed |
+| Knowledge extraction | Fast model (default: Gemini) | JSON extraction, factual |
+| Teaching / writing | Reasoning (`REASONING_MODEL`) | High-quality prose, analogies, examples |
+| Transitions | Gemini (`GEMINI_FAST_MODEL`) | Short, creative bridges |
+| Document structure | Gemini (`GEMINI_FAST_MODEL`) | TOC, glossary, and sources generation |
+| Block repair | Fast model (default: Gemini) | Targeted syntax fixes |
 
-Teaching generation includes automatic fallback: **GPT-OSS-120B → Llama 3.3 70B → Gemini Flash Lite** on rate limit errors.
+Teaching generation falls back automatically on rate limit / size errors: **`REASONING_MODEL` → Llama 3.3 70B → `GEMINI_FAST_MODEL`**. The fast model defaults to Gemini unless `LLM_PROVIDER=groq` is set, in which case Groq's Llama 3.3 70B is used.
 
 ---
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| **[Documentation.md](Documentation.md)** | Complete technical reference — architecture, pipeline stages, every file explained, prompt engineering, data flow diagrams |
+- **[Documentation.md](Documentation.md)** — Full technical reference: architecture, pipeline stages, file-by-file breakdown, prompt engineering, and data-flow diagrams.
 
 ---
 
 ## License
 
-This project is provided as-is for personal and educational use.
+Provided as-is for personal and educational use. No warranty or support is implied.
 
 ---
 
