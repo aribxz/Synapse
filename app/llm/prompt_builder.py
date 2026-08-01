@@ -1,9 +1,7 @@
 # The main motive of this file is to make sure the LLM receives knowledge in a manner which maximizes its capablities to build good notes. 
 
 from app.llm.models import LLMRequest
-from app.llm.prompts import STUDY_NOTES_PROMPT
 from app.llm.prompts.outline import OUTLINE_PROMPT
-from app.llm.prompts.merge import MERGE_PROMPT
 from app.llm.prompts.transition import TRANSITION_PROMPT
 from app.llm.prompts.document_structure import DOCUMENT_STRUCTURE_PROMPT
 from app.llm.outline_parser import OutlineTopic
@@ -73,122 +71,6 @@ class PromptBuilder:
             max_tokens=4096,
         )
 
-    def build( # Not to be used annymore.
-        self,
-        text: str,
-        outline: list[OutlineTopic],
-        current_topic: OutlineTopic,
-        topic_index: int,
-        total_topics: int,
-        previous_notes: str | None = None,
-    ) -> LLMRequest:
-
-        previous_section = previous_notes or "None (this is the first section)."
-
-        outline_text = "\n".join(
-            [
-                f"- {topic.title} ({topic.role})"
-                for topic in outline
-            ]
-        )
-
-        user_prompt = f"""
-                            DOCUMENT OUTLINE
-
-                            {outline_text}
-
-                            CURRENT TOPIC
-
-                            Title:
-                            {current_topic.title}
-
-                            Description:
-                            {current_topic.description}
-
-                            Role:
-                            {current_topic.role}
-
-                            Topic {topic_index + 1} of {total_topics}
-
-                            PREVIOUS SECTION
-
-                            {previous_section}
-
-                            YOUR RESPONSIBILITY
-
-                            Write this section according to its role.
-
-                            If the role is Motivation:
-                            Explain why this topic exists before explaining how it works.
-
-                            If the role is Intuition:
-                            Help the reader build an intuitive mental model.
-
-                            If the role is Mechanism:
-                            Explain the complete process step-by-step.
-
-                            If the role is Procedure:
-                            Describe the algorithm or workflow clearly.
-
-                            If the role is Example:
-                            Focus on demonstrating the concept.
-
-                            If the role is Edge Case:
-                            Explain limitations, assumptions and special cases.
-
-                            If the role is Takeaway:
-                            Summarize the important lessons and connect them to earlier topics.
-
-                            TASK
-
-                            Using ONLY the source content below:
-
-                            - Teach the material instead of summarizing it.
-                            - Follow the document outline.
-                            - Expand ideas when necessary.
-                            - Explain the reasoning behind important steps.
-                            - Define technical terms on first use.
-                            - Avoid repeating previous sections.
-                            - Assume this section will later be merged into one complete study guide.
-
-                            SOURCE CONTENT
-
-                            {text}
-                        """
-
-        return LLMRequest(
-            system_prompt=STUDY_NOTES_PROMPT,
-            user_prompt=user_prompt,
-        )
-    
-    def build_merge(self, sections: list[str], connections_info: str | None = None) -> LLMRequest:
-        combined = "\n\n".join(sections) # Joins all the formatted outlines.
-
-        extra_context = ""
-
-        if connections_info: # This is so that the LLM can recognize cross topics and remember terminology.
-            extra_context = f"""
-CROSS-TOPIC CONNECTIONS (from extraction)
-
-The following cross-topic relationships were identified. Use them to ensure consistent terminology and to link related sections:
-
-{connections_info}
-
-"""
-
-        user_prompt = f"""
-                        {extra_context}Merge the following study guide sections into one polished document.
-
-                        Study Guide Sections
-
-                        {combined}
-                    """
-
-        return LLMRequest(
-            system_prompt=MERGE_PROMPT,
-            user_prompt=user_prompt,
-        )
-    
     def build_transition(self, prev_tail: str, next_head: str) -> LLMRequest: # Just tells gemini to write a transition.
         return LLMRequest(
             system_prompt=TRANSITION_PROMPT,

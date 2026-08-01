@@ -2,12 +2,6 @@ import json, os
 from flask import Blueprint, render_template, request, Response, stream_with_context, send_file
 
 from app.controllers.input_controller import InputController
-from app.services.ai_service import AIService
-from app.services.chunking_service import ChunkingService
-from app.models.knowledge_source import KnowledgeSource
-from app.models.enums import SourceType
-from app.models.knowledge_collection import KnowledgeCollection
-from app.services.extraction_service import ExtractionService
 
 main_bp = Blueprint("main", __name__) # Name is just storing where the blueprint came from.
 controller = InputController()
