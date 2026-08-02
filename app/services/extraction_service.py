@@ -23,5 +23,8 @@ class ExtractionService:
             except Exception as e:
                 source.status = ProcessingStatus.FAILED
                 source.error = str(e)
+
+                if hasattr(e, "detail"):
+                    source.metadata["error_detail"] = e.detail
         
         return collection

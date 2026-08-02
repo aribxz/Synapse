@@ -5,7 +5,7 @@ from app.services.ai_service import AIService
 from app.rendering.markdown_renderer import MarkdownRenderer
 from app.services.export_service import ExportService
 from app.services.quality_gate import QualityGate
-from app.models.enums import ProcessingStatus
+from app.models.enums import ProcessingStatus, SourceType
 
 
 class PipelineService:
@@ -28,6 +28,17 @@ class PipelineService:
         yield 5, "Extracting content from sources...", ""
         collection = self.extraction.process(collection) # From links/pdfs to transcripts.
 
+        failed_sources = [s for s in collection.sources if s.status == ProcessingStatus.FAILED]
+        total_sources = len(collection.sources)
+
+        if failed_sources:
+            yield 5, f"Extraction finished — {len(failed_sources)} of {total_sources} source(s) failed to extract", ""
+            for s in failed_sources:
+                reason = (s.error or "no extractable text found").strip()
+                yield 5, f"Could not extract: {s.title} — {reason[:80]}", s.title
+        else:
+            yield 5, f"Extraction complete — all {total_sources} source(s) extracted successfully", ""
+
         yield 8, "Processing documents...", ""
         collection = self.processing.process(collection) # From transcripts to clean text.
 
@@ -44,10 +55,28 @@ class PipelineService:
                 or len(source.raw_content.strip()) < 200
             ):
                 source.status = ProcessingStatus.FAILED
-                source.error = "No extractable text found."
 
-                print(f"Skipping {source.title}: no usable text extracted.", flush=True)
-                generated_sections.append(f"## {source.title}\n\n_Could not extract text from this source._")
+                if not source.error:
+                    source.error = "No extractable text found."
+
+                print(f"Skipping {source.title}: {source.error}", flush=True)
+
+                error_detail = source.metadata.get("error_detail")
+                if error_detail:
+                    print(f"  Detail: {error_detail}", flush=True)
+
+                if source.source_type == SourceType.YOUTUBE:
+                    generated_sections.append(
+                        f"## {source.title}\n\n"
+                        f"**Could not extract the transcript from this video:** {source.error}\n\n"
+                        "_If this keeps happening, get the transcript manually: on YouTube "
+                        "click '...' under the video, select 'Show transcript', copy the text, "
+                        "save it as a .txt file, and upload it here._"
+                    )
+                else:
+                    generated_sections.append(
+                        f"## {source.title}\n\n_Could not extract text from this source: {source.error}_"
+                    )
 
                 continue
 
