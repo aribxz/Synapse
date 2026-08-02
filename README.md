@@ -35,6 +35,7 @@ Synapse ingests PDFs, Word documents, PowerPoint slides, plain text, YouTube vid
 ## Features
 
 - **Multi-format ingestion** — Upload files or paste URLs; Synapse handles the rest
+- **Resilient YouTube extraction** — Gemini-native transcription (Google's servers fetch the video, bypassing cloud IP blocks) with a four-step fallback chain and verbatim→paraphrase retry
 - **Intelligent chunking** — Large documents are split and mapped to topic outlines automatically
 - **Two-stage AI pipeline** — Structured knowledge extraction followed by human-friendly teaching prose
 - **Obsidian-optimized output** — LaTeX math, Mermaid diagrams, callouts, wiki links, and grouped navigation
@@ -106,9 +107,14 @@ Open [http://localhost:5000](http://localhost:5000), upload your materials or pa
 
 ### Production Deployment
 
+This repo ships a `Procfile` for platforms like Render:
+
 ```bash
-gunicorn -w 2 -b 0.0.0.0:5000 "run:app"
+gunicorn run:app --workers 1 --timeout 900
 ```
+
+> [!NOTE]
+> `--timeout 900` is intentional. Long runs (Gemini YouTube transcription, Groq TPM backoff waits, merge, quality checks) easily exceed gunicorn's 5-minute default, and a too-low timeout combined with Cloudflare's ~100s idle proxy timeout caused **520** errors mid-generation. The pipeline also emits a progress heartbeat every 15s on silent steps so neither gunicorn nor Cloudflare drops an active request.
 
 ---
 
@@ -195,6 +201,8 @@ Synapse/
 ├── run.py                     # Application entry point
 ├── config.py                  # Environment configuration
 ├── requirements.txt           # Python dependencies
+├── Procfile                   # Gunicorn startup command for Render (--timeout 900)
+├── home_helper.py             # Optional local YouTube transcript fallback server
 ├── .python-version            # Pinned Python version (3.14.3)
 ├── Documentation.md           # Full technical documentation
 ├── README.md                  # This file
@@ -269,7 +277,7 @@ Synapse/
 | Env configuration | python-dotenv |
 | PDF extraction | PyMuPDF |
 | Document parsing | python-docx, python-pptx |
-| YouTube transcripts | youtube-transcript-api |
+| YouTube transcripts | Gemini-native transcription (primary) → youtube-transcript-api → hosted service → home helper |
 | Web extraction | Trafilatura |
 | Retry logic | Tenacity |
 | Production server | Gunicorn |

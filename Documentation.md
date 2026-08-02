@@ -174,6 +174,9 @@ flowchart LR
 > [!NOTE]
 > Sources with fewer than **200 characters** of extractable text are marked as `FAILED` and receive a placeholder section in the output rather than blocking the entire pipeline.
 
+> [!IMPORTANT]
+> **Heartbeats on silent steps (deployment resilience).** The pipeline's long, silent, blocking steps — extraction, outline generation, merge, and quality checks — are wrapped in `PipelineService._heartbeat()`. It runs the blocking call on a background thread while the generator yields a `"Still working..."` status line every **15 seconds** (reusing the current step's `pct`). Without this, gunicorn's worker timeout and Cloudflare's ~100s idle proxy timeout would kill long runs on Render — the cause of the Cloudflare **520** errors seen on phone requests. See `--timeout 900` in the `Procfile`.
+
 ---
 
 ## 4. Application Bootstrap & Configuration
@@ -228,7 +231,8 @@ Python dependencies:
 | `PyMuPDF` | PDF text extraction |
 | `python-docx` | Word document parsing |
 | `python-pptx` | PowerPoint parsing |
-| `youtube-transcript-api` | YouTube transcript fetching |
+| `youtube-transcript-api` | YouTube transcript fetching (direct fallback path) |
+| `requests` | HTTP fetches for the hosted-service and home-helper YouTube fallbacks |
 | `trafilatura` | Web page content extraction |
 | `tenacity` | Retry logic for API calls |
 | `gunicorn` | Production WSGI server |
@@ -645,15 +649,24 @@ Reads the file at `source.metadata["path"]` with UTF-8 encoding. The simplest ex
 
 #### `app/ingestion/extractors/youtube_extractor.py`
 
-Fetches YouTube video transcripts:
+Fetches YouTube video transcripts through a **four-step fallback chain**. The reason for the chain: on a deployed cloud server (Render), the datacenter IP is blocked by YouTube, so a single fetch path is unreliable. The extractor tries each step in order and returns the first one that yields a usable transcript (minimum **50 words**):
 
-1. **`extract_video_id_from_url()`** — Parses video IDs from both `youtu.be/ID` and `youtube.com/watch?v=ID` formats
-2. **`YouTubeTranscriptApi().fetch(video_id)`** — Retrieves transcript data
-3. **`TextFormatter().format_transcript()`** — Converts to plain text
-4. Replaces newlines with spaces for continuous prose
+| Step | Name | Implementation | Works where |
+|------|------|----------------|-------------|
+| 1 | `gemini` | `_fetch_via_gemini()` → `GeminiClient.transcribe_youtube()` | Anywhere — Google's servers fetch the video, bypassing the IP block entirely |
+| 2 | `direct` | `YouTubeTranscriptApi().fetch(video_id)` + `TextFormatter()` | Home IPs only; blocked from Render |
+| 3 | `free hosted service` | `_fetch_hosted()` via `requests` to `YOUTUBE_TRANSCRIPT_SERVICE_URL` (default `https://youtube-transcript.ai`) | Home IPs only; rate-limits datacenter IPs |
+| 4 | `home helper` | `_fetch_home_helper()` → a user-run server (`home_helper.py`, port 5055) at `HOME_HELPER_URL` | Anywhere the helper PC is reachable (e.g., Tailscale) |
+
+Additional behavior:
+
+- **`extract_video_id_from_url()`** — Parses video IDs from both `youtu.be/ID` and `youtube.com/watch?v=ID` formats
+- **Transcript caching** — A module-level `_TRANSCRIPT_CACHE` keyed by video ID avoids re-fetching the same video twice in one process
+- **Friendly error reporting** — `_friendly_reason()` maps known library exceptions (`IpBlocked`, `RequestBlocked`, `PoTokenRequired`, `TranscriptsDisabled`, `NoTranscriptFound`, `InvalidVideoId`) to human-readable messages; the whole chain's per-step failures are surfaced via `YouTubeExtractionError(reason, detail)`
+- Replaces newlines with spaces for continuous prose
 
 > [!WARNING]
-> YouTube extraction depends on captions being available for the video. Videos without transcripts will fail extraction.
+> The primary path (Gemini) is a **free-tier preview**: only **public** videos work (no private/unlisted), and there is an **8 hours of YouTube video/day** cap. Gemini's recitation (copyright) filter can block verbatim transcription — `transcribe_youtube()` retries once with a paraphrase prompt to recover most of these. Very long videos may overflow the context window and fall through to the other paths. Videos with no captions at all will still fail extraction.
 
 #### `app/ingestion/extractors/web_extractor.py`
 
@@ -827,6 +840,13 @@ Mirrors GroqClient for Google's Gemini API:
 - Uses `google.genai.Client` with `GenerateContentConfig`
 - System instruction via `system_instruction` parameter
 - Same retry, usage tracking, and thinking-tag stripping
+
+Also provides **`transcribe_youtube()`**, the primary YouTube extraction path on deployed instances:
+
+- Sends the YouTube URL as a `FileData` part — Google's servers fetch and decode the video, so the cloud's IP-blocked address never touches the video bytes
+- Uses `gemini-3.1-flash-lite` with `max_output_tokens=65536` and `MEDIA_RESOLUTION_LOW`
+- Tries a verbatim transcription prompt first; on an empty response, retries once with a section-by-section paraphrase prompt to dodge the recitation (copyright) filter
+- Raises `ValueError` (including the `finish_reason`) if both attempts come back empty
 
 ### LLM Data Models
 
@@ -1167,6 +1187,8 @@ Complete file listing organized by pipeline stage.
 | `run.py` | Bootstrap | Application entry point |
 | `config.py` | Bootstrap | Environment configuration and validation |
 | `requirements.txt` | Bootstrap | Python dependencies |
+| `Procfile` | Deployment | Gunicorn startup command (`--workers 1 --timeout 900`) for Render |
+| `home_helper.py` | Deployment | Optional local YouTube transcript fallback server (port 5055) |
 
 ### Application Core
 
@@ -1197,7 +1219,7 @@ Complete file listing organized by pipeline stage.
 | `app/ingestion/extractors/docx_extractor.py` | Extraction | Word document extraction |
 | `app/ingestion/extractors/pptx_extractor.py` | Extraction | PowerPoint text extraction |
 | `app/ingestion/extractors/txt_extractor.py` | Extraction | Plain text file reading |
-| `app/ingestion/extractors/youtube_extractor.py` | Extraction | YouTube transcript fetching |
+| `app/ingestion/extractors/youtube_extractor.py` | Extraction | YouTube transcript fetching via fallback chain (gemini → direct → hosted → home helper) |
 | `app/ingestion/extractors/web_extractor.py` | Extraction | Web page content extraction |
 
 ### Processing
