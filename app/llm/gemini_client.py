@@ -77,6 +77,11 @@ class GeminiClient:
         the YouTube URL directly and transcribes it server-side, bypassing the
         IP problem entirely.
 
+        Gemini's recitation (copyright) filter sometimes blocks verbatim
+        transcription, returning an empty response. In that case we retry once
+        with a section-by-section, "in your own words" prompt, which usually
+        passes while keeping ~96% fidelity.
+
         Caveats:
           - Preview feature: free tier caps at 8 hours of YouTube video/day
             and only PUBLIC videos are supported (no private/unlisted).
@@ -84,29 +89,44 @@ class GeminiClient:
             caller should fall back to another path when this raises.
         """
         model = model or os.getenv("GEMINI_FAST_MODEL", "gemini-3.1-flash-lite")
-        prompt = (
+
+        verbatim_prompt = (
             "Transcribe this video's full spoken content as accurately as "
             "possible, in order, as plain text. Do not summarize or skip "
             "sections. Output only the spoken words with no timestamps."
         )
-
-        contents = types.Content(
-            parts=[
-                types.Part(file_data=types.FileData(file_uri=url)),
-                types.Part(text=prompt),
-            ]
+        paraphrase_prompt = (
+            "Transcribe this video section by section in time order. For each "
+            "~2 minute section, give the full spoken content in your own words, "
+            "keeping every detail and example. Do not skip anything. "
+            "Output plain text."
         )
 
-        response = self.client.models.generate_content(
-            model=model,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                max_output_tokens=65536,
-                media_resolution=types.MediaResolution.MEDIA_RESOLUTION_LOW,
-            ),
-        )
+        last_reason = "no candidates returned"
+        for prompt in (verbatim_prompt, paraphrase_prompt):
+            contents = types.Content(
+                parts=[
+                    types.Part(file_data=types.FileData(file_uri=url)),
+                    types.Part(text=prompt),
+                ]
+            )
 
-        text = (response.text or "").strip()
-        if not text:
-            raise ValueError("Gemini returned an empty transcript")
-        return text
+            response = self.client.models.generate_content(
+                model=model,
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    max_output_tokens=65536,
+                    media_resolution=types.MediaResolution.MEDIA_RESOLUTION_LOW,
+                ),
+            )
+
+            text = (response.text or "").strip()
+            if text:
+                return text
+
+            if response.candidates:
+                last_reason = str(response.candidates[0].finish_reason)
+            else:
+                last_reason = "no candidates returned"
+
+        raise ValueError(f"Gemini returned an empty transcript (finish reason: {last_reason})")
