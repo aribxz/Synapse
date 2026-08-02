@@ -16,6 +16,7 @@ from youtube_transcript_api import (
 from youtube_transcript_api.formatters import TextFormatter
 
 from app.ingestion.base_extractor import BaseExtractor
+from app.llm.gemini_client import GeminiClient
 from app.models.knowledge_source import KnowledgeSource
 
 
@@ -60,6 +61,15 @@ def _friendly_reason(exc: Exception) -> str:
     if isinstance(exc, InvalidVideoId):
         return "Invalid YouTube link"
     return None
+
+
+def _fetch_via_gemini(video_id: str) -> str:
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    client = GeminiClient()
+    text = client.transcribe_youtube(url)
+    if len(text.split()) < 50:
+        raise ValueError("Gemini transcript too short to be usable")
+    return text
 
 
 def _fetch_direct(video_id: str) -> str:
@@ -111,6 +121,7 @@ def _fetch_home_helper(video_id: str) -> str:
 
 def _fetch_transcript(video_id: str) -> str:
     steps = [
+        ("gemini", _fetch_via_gemini),
         ("direct", _fetch_direct),
         ("free hosted service", _fetch_hosted),
         ("home helper", _fetch_home_helper),

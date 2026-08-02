@@ -67,3 +67,46 @@ class GeminiClient:
         ).strip()
 
         return LLMResponse(raw_output=raw_content, usage=usage)
+
+    def transcribe_youtube(self, url: str, model: str | None = None) -> str:
+        """Ask Gemini to transcribe a public YouTube video using its native
+        video support (Google's servers fetch the video, not ours).
+
+        Why this exists: Render's server IP is blocked by YouTube, so the
+        transcript library can't fetch captions from the cloud. Gemini accepts
+        the YouTube URL directly and transcribes it server-side, bypassing the
+        IP problem entirely.
+
+        Caveats:
+          - Preview feature: free tier caps at 8 hours of YouTube video/day
+            and only PUBLIC videos are supported (no private/unlisted).
+          - Very long videos may fail or overflow the context window; the
+            caller should fall back to another path when this raises.
+        """
+        model = model or os.getenv("GEMINI_FAST_MODEL", "gemini-3.1-flash-lite")
+        prompt = (
+            "Transcribe this video's full spoken content as accurately as "
+            "possible, in order, as plain text. Do not summarize or skip "
+            "sections. Output only the spoken words with no timestamps."
+        )
+
+        contents = types.Content(
+            parts=[
+                types.Part(file_data=types.FileData(file_uri=url)),
+                types.Part(text=prompt),
+            ]
+        )
+
+        response = self.client.models.generate_content(
+            model=model,
+            contents=contents,
+            config=types.GenerateContentConfig(
+                max_output_tokens=65536,
+                media_resolution=types.MediaResolution.MEDIA_RESOLUTION_LOW,
+            ),
+        )
+
+        text = (response.text or "").strip()
+        if not text:
+            raise ValueError("Gemini returned an empty transcript")
+        return text
