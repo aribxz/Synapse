@@ -194,7 +194,7 @@
     display:none; flex-direction:column; gap:5px; width:34px; height:34px; align-items:center; justify-content:center;
     background:none; border:1px solid var(--line); border-radius:50%; cursor:pointer; transition: border-color 0.3s var(--ease-soft);
   }
-  .hamburger span{ display:block; width:16px; height:1.8px; background: var(--gray); border-radius:2px; transition: all 0.3s var(--ease); }
+  .hamburger span{ display:block; width:16px; height:1.8px; background: var(--gray); border-radius:2px; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
   .hamburger.open span:nth-child(1){ transform: translateY(6.8px) rotate(45deg); }
   .hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
   .hamburger.open span:nth-child(3){ transform: translateY(-6.8px) rotate(-45deg); }
@@ -584,10 +584,21 @@
       position:fixed; top:64px; left:0; right:0; flex-direction:column; gap:0; align-items:stretch;
       background: rgba(var(--cream-rgb), 0.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--line); padding: 12px 20px;
-      transform: translateY(-110%); opacity:0; transition: transform 0.4s var(--ease), opacity 0.4s var(--ease); pointer-events:none;
+      transform: translateY(-110%); opacity:0;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s var(--ease);
+      pointer-events:none; will-change: transform, opacity;
     }
-    .nav-links.open{ transform: translateY(0); opacity:1; pointer-events:auto; }
-    .nav-links a, .nav-links .theme-toggle{ padding: 14px 0; gap:0; width:auto; height:auto; border-radius:0; border:none; background:none; font-size:0.95rem; justify-content:flex-start; }
+    .nav-links.open{ transform: translateY(0); opacity:1; pointer-events:auto; transition-delay: 0.05s; }
+    .nav-links a, .nav-links .theme-toggle{
+      padding: 14px 0; gap:0; width:auto; height:auto; border-radius:0; border:none; background:none; font-size:0.95rem; justify-content:flex-start;
+      opacity:0; transform: translateY(-8px);
+      transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+    }
+    .nav-links.open a, .nav-links.open .theme-toggle{ opacity:1; transform:none; }
+    .nav-links.open a:nth-child(1){ transition-delay: 0.08s; }
+    .nav-links.open a:nth-child(2){ transition-delay: 0.14s; }
+    .nav-links.open a:nth-child(3){ transition-delay: 0.2s; }
+    .nav-links.open .theme-toggle{ transition-delay: 0.26s; }
     .nav-links a::after{ display:none; }
     .nav-links .theme-toggle{ border-top: 1px solid var(--line); margin-top:4px; padding-top:18px; }
     .nav-links .theme-toggle svg{ width:18px; height:18px; }
@@ -595,10 +606,13 @@
     .hero{ padding: 52px 20px 36px; }
     .hero h1{ font-size: clamp(1.7rem, 6vw, 2.4rem); }
     .hero p.sub{ font-size: 0.95rem; }
-    .hero-visual{ min-height: clamp(240px, 50vh, 400px); }
-    .chip-yt{ left: 0; top: 4px; }
-    .chip-diagram{ right: 0; bottom: -10px; }
-    .chip-model{ top: -10px; right: 6px; }
+    .hero-visual{
+      display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+      gap:14px; min-height:0;
+    }
+    .hero-visual .note-card{ position:relative; left:auto; top:auto; transform:none; order:1; width:100%; max-width:min(480px, 92vw); z-index:3; }
+    .hero-visual .chip-card{ position:relative; left:auto; right:auto; top:auto; bottom:auto; order:2; --rot:0deg; z-index:2; }
+    .hero-visual .chip-diagram{ width:160px; }
     .brand-logomark-lg{ width: 76px; height: 76px; }
 
     section{ padding: 60px 0; }
@@ -623,6 +637,9 @@
     .stat-num{ font-size: 1.7rem; }
 
     .cta-band{ padding: 48px 24px; }
+    .about-cta-band{ padding: 44px 24px; }
+    .divider-text{ white-space:normal; font-size:0.82rem; line-height:1.6; }
+    .divider-phrase{ gap:10px; }
 
     footer{ padding: 32px 20px; }
     .footer-inner{ flex-direction:column; text-align:center; gap:14px; }
@@ -642,6 +659,11 @@
     .status-area{ max-width:100%; }
     section{ padding: 46px 0; }
     .badge{ font-size:0.75rem; padding:5px 12px; }
+    .cta-band, .about-cta-band{ padding: 40px 18px; }
+    .cta-band h2, .about-cta-content h2{ font-size: 1.45rem; }
+    .cta-band .btn-primary, .about-cta-content .btn-primary{ max-width:100%; white-space:nowrap; }
+    .divider-text{ font-size:0.78rem; }
+    .divider-line{ max-width:40px; }
     .stats-band{ grid-template-columns: 1fr; padding: 26px 18px; gap:20px; }
     .stat-item{ border:none !important; padding:0 !important; }
   }
@@ -1053,6 +1075,10 @@
         <div class="faq-item">
           <button class="faq-q">Does it work with paywalled or private videos?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
           <div class="faq-a"><div class="faq-a-inner">Synapse needs a public transcript or a page it can fetch. Private or DRM-protected content isn't supported.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What are the limitations of YouTube links?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+          <div class="faq-a"><div class="faq-a-inner">Short and medium-length videos work best when you paste a direct YouTube link. For long-form content — especially multi-hour lectures — we recommend uploading a <code>.txt</code> file or an already-exported transcript from YouTube, since free-tier constraints prevent us from processing very long videos directly from a link.</div></div>
         </div>
         <div class="faq-item">
           <button class="faq-q">Can I mix multiple files and links in one run?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
