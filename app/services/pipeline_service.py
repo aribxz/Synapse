@@ -1,3 +1,6 @@
+import threading
+import time
+
 from app.services.extraction_service import ExtractionService
 from app.processing.document_processor import DocumentProcessor
 from app.services.chunking_service import ChunkingService
@@ -20,13 +23,49 @@ class PipelineService:
         self.quality_gate = QualityGate(ai_service=self.ai)
         self.exporter = ExportService()
 
+    def _heartbeat(self, fn, pct, msg, interval=15):
+        """Run a blocking call in a background thread, yielding a status
+        heartbeat every `interval` seconds so gunicorn's worker timeout and
+        Cloudflare's idle timeout never kill a long-running silent step.
+
+        Returns the blocking call's result via StopIteration.value.
+        """
+        box = {}
+        done = threading.Event()
+
+        def runner():
+            try:
+                box["result"] = fn()
+            except Exception as exc:
+                box["error"] = exc
+            finally:
+                done.set()
+
+        threading.Thread(target=runner, daemon=True).start()
+
+        last = time.monotonic()
+        while not done.is_set():
+            now = time.monotonic()
+            if now - last >= interval:
+                yield pct, msg, ""
+                last = now
+            time.sleep(0.5)
+
+        if "error" in box:
+            raise box["error"]
+        return box["result"]
+
     def process(self, collection, fast_model="gemini"):
         print(f"\n=== Pipeline started (fast model: {fast_model}) ===", flush=True)
 
         yield 2, "Starting pipeline...", ""
 
         yield 5, "Extracting content from sources...", ""
-        collection = self.extraction.process(collection) # From links/pdfs to transcripts.
+        collection = yield from self._heartbeat( # From links/pdfs to transcripts.
+            lambda: self.extraction.process(collection),
+            pct=5,
+            msg="Still extracting content...",
+        )
 
         failed_sources = [s for s in collection.sources if s.status == ProcessingStatus.FAILED]
         total_sources = len(collection.sources)
@@ -99,7 +138,11 @@ class PipelineService:
             yield int(source_start + 6), f"Generating outline for {source.title}", source.title # Again, progress bar.
 
             try:
-                outline = self.ai.generate_outline(chunks, fast_model=fast_model) # It decides what chunks are related.
+                outline = yield from self._heartbeat( # It decides what chunks are related.
+                    lambda: self.ai.generate_outline(chunks, fast_model=fast_model),
+                    pct=int(source_start + 6),
+                    msg=f"Still generating outline for {source.title}...",
+                )
 
             except Exception as exc:
                 generated_sections.append(f"## {source.title}\n\nAI generation failed: {exc}")
@@ -143,10 +186,14 @@ class PipelineService:
                 merge_msgs.append(msg)
 
             try:
-                merged_document = self.ai.merge_sections( # Merges the glossary, nav bar etc.
-                    generated_sections,
-                    connections_info=all_connections,
-                    progress_callback=on_merge_progress,
+                merged_document = yield from self._heartbeat( # Merges the glossary, nav bar etc.
+                    lambda: self.ai.merge_sections(
+                        generated_sections,
+                        connections_info=all_connections,
+                        progress_callback=on_merge_progress,
+                    ),
+                    pct=78,
+                    msg="Still merging sections...",
                 )
 
                 for m in merge_msgs:
@@ -171,7 +218,11 @@ class PipelineService:
         markdown = self.renderer.render([merged_document]) # Internal document to polished markdown.
 
         yield 90, "Running quality checks...", ""
-        markdown = self.quality_gate.run(markdown, fast_model=fast_model) # Final inspection.
+        markdown = yield from self._heartbeat( # Final inspection.
+            lambda: self.quality_gate.run(markdown, fast_model=fast_model),
+            pct=90,
+            msg="Still running quality checks...",
+        )
 
         yield 95, "Exporting...", ""
         output_file = self.exporter.export(markdown, "notes") # Export service.
